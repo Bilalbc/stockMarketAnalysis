@@ -5,11 +5,16 @@ import java.util.Arrays;
 
 public class formulas {
 	
+	double SMA;
+	double SD;
+	
 	public String path ="";
 	readFile r;
-	//Date	Open	High	Low	Close*	Adj Close**	Volume
+	//Date	
+	//Open	High	Low	Close*	Adj Close**	Volume
 	Date [] dateArray;
 	double [][] values;
+	double [][] bollingerBand;
 	
 	
 	public formulas (String string) {
@@ -46,6 +51,42 @@ public class formulas {
 			}
 		}
 	}
+	public void createBollinger(double [][] v) {
+		double sum = 0;
+		int divisor = 0;
+		double upper;//upper bollinger line
+		double lower;//lower bollinger line
+		
+		bollingerBand = new double[values.length][3];
+		SMA =0;//simple moving average
+		SD = 0; //standard deviation
+		
+		//calculating SMA
+		for(int j=0;j<v.length-20;j++) {
+			for(int i=0;i<19;i++) {
+				sum+=v[i+j][3];//getting close values
+				divisor++;	
+			}
+			SMA = sum/divisor;
+			bollingerBand[j][1]=SMA;
+			divisor = 0;
+			
+			//calculating standard deviation
+			for(int i=0+j;i<19+j;i++) {
+				SD +=(v[i][3]/sum)*(v[i][3]/sum);
+				Math.sqrt(SD/20);
+			}
+			upper = SMA + (2*SD);
+			lower = SMA - (2*SD);
+			
+			bollingerBand[j][0] = lower;
+			bollingerBand[j][2] = upper;
+			
+			sum = 0;
+		}
+		for(int i=0;i<v.length;i++)
+			System.out.println(bollingerBand[i][2]);
+	}
 	
 	public void printValues() {
 		for(int i=0; i<values.length;i++) {
@@ -66,8 +107,6 @@ public class formulas {
 		for(int i=0;i<10/2;i++) {
 		    r[i] = r[10 - i - 1];	    	
 		}
-	
-			
 	}
 	
 	public double[][] getValues(){
@@ -76,5 +115,9 @@ public class formulas {
 	
 	public Date[] getDates(){
 		return dateArray;
+	}
+	
+	public double [][] getBollinger(){
+		return bollingerBand;
 	}
 }
