@@ -1,7 +1,8 @@
-import java.util.*; 
+import java.util.*;  
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import com.tictactec.ta.lib.Core;
 
 public class formulas {
 	
@@ -21,7 +22,7 @@ public class formulas {
 		
 		r = new readFile(string);
 		 
-		values = new double [r.findRows()][7];
+		values = new double [r.findRows()][9];
 		dateArray = new Date[r.findRows()];
 	}
 	
@@ -43,7 +44,7 @@ public class formulas {
 	public void createValues(String[][] n) {
 		for (int i=0; i<n.length;i++) {
 			for(int j=0;j<n[i].length;j++) {
-				if(j>0){
+				if(j>0&&j<6){
 					values[i][j] = Float.parseFloat(n[i][j]);
 				}else {
 					values[i][j] = 0;
@@ -51,41 +52,46 @@ public class formulas {
 			}
 		}
 	}
+	
+	public void createMACD() {
+		
+	}
 	public void createBollinger(double [][] v) {
 		double sum = 0;
 		int divisor = 0;
+		int start = 10;
 		double upper;//upper bollinger line
 		double lower;//lower bollinger line
 		
-		bollingerBand = new double[values.length][3];
 		SMA =0;//simple moving average
 		SD = 0; //standard deviation
-		
 		//calculating SMA
-		for(int j=0;j<v.length-20;j++) {
-			for(int i=0;i<19;i++) {
-				sum+=v[i+j][3];//getting close values
+		for(int j=10;j<v.length;j++) {
+			for(int i=1;i<11;i++) {
+				if(start>v.length) {
+					return;
+				}
+				sum+=v[start-i][4];//getting close values
 				divisor++;	
 			}
 			SMA = sum/divisor;
-			bollingerBand[j][1]=SMA;
+			values[j][7]=SMA;
 			divisor = 0;
 			
 			//calculating standard deviation
-			for(int i=0+j;i<19+j;i++) {
-				SD +=(v[i][3]/sum)*(v[i][3]/sum);
-				Math.sqrt(SD/20);
+			for(int i=1;i<11;i++) {
+				SD +=Math.pow(v[start-i][4]-SMA, 2);
+				SD = Math.sqrt(SD/10);
 			}
 			upper = SMA + (2*SD);
 			lower = SMA - (2*SD);
 			
-			bollingerBand[j][0] = lower;
-			bollingerBand[j][2] = upper;
+			values[j][8] = lower;
+			values[j][6] = upper;
 			
 			sum = 0;
+			start+=1;
 		}
-		for(int i=0;i<v.length;i++)
-			System.out.println(bollingerBand[i][2]);
 	}
 	
 	public void printValues() {
@@ -102,11 +108,6 @@ public class formulas {
 		for(int i=0; i<dateArray.length;i++)
 			System.out.println(dateArray[i]);
 		System.out.println();
-	}
-	public void reverseArray(double [][] r) {
-		for(int i=0;i<10/2;i++) {
-		    r[i] = r[10 - i - 1];	    	
-		}
 	}
 	
 	public double[][] getValues(){
