@@ -1,8 +1,9 @@
+package stockAnalysisProgram;
 import java.util.*;  
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import com.tictactec.ta.lib.Core;
+
 
 public class formulas {
 	
@@ -16,7 +17,6 @@ public class formulas {
 	Date [] dateArray;
 	double [][] values;
 	double [][] bollingerBand;
-	
 	
 	public formulas (String string) {
 		
@@ -53,45 +53,57 @@ public class formulas {
 		}
 	}
 	
-	public void createMACD() {
-		
-	}
-	public void createBollinger(double [][] v) {
+	public void createSMA(int period) {
 		double sum = 0;
 		int divisor = 0;
-		int start = 10;
-		double upper;//upper bollinger line
-		double lower;//lower bollinger line
-		
+		int start = period;
 		SMA =0;//simple moving average
-		SD = 0; //standard deviation
-		//calculating SMA
-		for(int j=10;j<v.length;j++) {
-			for(int i=1;i<11;i++) {
-				if(start>v.length) {
+		
+		for(int j=period;j<values.length;j++) {
+			for(int i=1;i<period+1;i++) {
+				if(start>values.length) {
 					return;
 				}
-				sum+=v[start-i][4];//getting close values
+				sum+=values[start-i][4];//getting close values
 				divisor++;	
 			}
 			SMA = sum/divisor;
 			values[j][7]=SMA;
 			divisor = 0;
-			
+		
+			sum = 0;
+			start+=1;
+		}
+	}
+	public void createBollinger(int period) {
+		int start = period;
+		double upper;//upper bollinger line
+		double lower;//lower bollinger line
+		
+		SD = 0; //standard deviation
+		
+		//calculating SMA
+		for(int j=period;j<values.length;j++) {
 			//calculating standard deviation
-			for(int i=1;i<11;i++) {
-				SD +=Math.pow(v[start-i][4]-SMA, 2);
-				SD = Math.sqrt(SD/10);
+			for(int i=1;i<period+1;i++) {
+				SD +=Math.pow(values[start-i][4]-values[start-i][7], 2);
+				SD = Math.sqrt(SD/period);
 			}
-			upper = SMA + (2*SD);
-			lower = SMA - (2*SD);
+			upper = values[j][7] + (2*SD);
+			lower = values[j][7] - (2*SD);
 			
 			values[j][8] = lower;
 			values[j][6] = upper;
 			
-			sum = 0;
 			start+=1;
 		}
+	}
+	
+	public void createEMA() {
+		
+	}
+	public void createMACD() {
+		
 	}
 	
 	public void printValues() {

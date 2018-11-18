@@ -1,3 +1,4 @@
+package stockAnalysisProgram;
 import java.io.*; 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
