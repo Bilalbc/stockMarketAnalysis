@@ -102,11 +102,7 @@ public class drawGraphs extends JFrame  {
 	    xAxis.setRange(f.dateArray[frame], f.dateArray[f.dateArray.length-1]);
 	    xAxis.setDateFormatOverride(new SimpleDateFormat("MMM"));
 	    xAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
-	       
-	    CategoryItemRenderer lineRenderer = new LineAndShapeRenderer();
-	    lineRenderer.setSeriesPaint( 0 , Color.BLACK );
-	    lineRenderer.setSeriesStroke( 0 , new BasicStroke( 1f ) );
-	    
+
 	    //drawing lines in graph
 	    XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
 	    renderer.setSeriesPaint( 0 , Color.BLACK );
@@ -119,10 +115,6 @@ public class drawGraphs extends JFrame  {
 		
 		plot.setDomainAxis(xAxis);
 		plot.setRenderer( renderer ); 
-      
-	//	MACD m = new MACD("tile");
-		
-		JFrame frame = new JFrame();
 		
 		setVisible(true);
 		setContentPane( chartPanel );
@@ -138,10 +130,9 @@ private XYDataset createDataset(Date d [], double x [][]) {
 	     // XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
 	      for(int i=20;i<period;i++) {
-	    	
-	    		  bollingerLower.addOrUpdate(new Day(d[i]), x[i][8]);
-	    		  bollingerMiddle.addOrUpdate(new Day(d[i]), x[i][7]);   
-	    		  bollingerUpper.addOrUpdate(new Day(d[i]), x[i][6]);   
+	    	  bollingerLower.addOrUpdate(new Day(d[i]), x[i][8]);
+	    	  bollingerMiddle.addOrUpdate(new Day(d[i]), x[i][7]);   
+	    	  bollingerUpper.addOrUpdate(new Day(d[i]), x[i][6]);   
 
 	      }
       for(int i=20;i<period;i++)

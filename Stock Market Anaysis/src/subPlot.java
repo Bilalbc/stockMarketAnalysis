@@ -47,7 +47,10 @@ public class subPlot extends ApplicationFrame {
     		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
     }
-    
+    /*
+     * choice the graph display that the user chose to view the data in
+     * returns the the gr
+     */
     public JFreeChart createChart(int choice) {
     		readFile r;
     		
@@ -62,7 +65,7 @@ public class subPlot extends ApplicationFrame {
     			f.createDateArray(r.getArray());
     			f.createSMA(frame);
       				period = 130;
-      				title = "daily - 6 months"; 
+      				title = "Daily - 6 Months"; 
       				break;
     		case 2: 
     			fileLoc = "C:\\Users\\haseebchaudhry\\git\\repository\\stockAnalysisProgram\\src\\Data\\Weekly - 2 years.txt";
@@ -73,7 +76,7 @@ public class subPlot extends ApplicationFrame {
     			f.createDateArray(r.getArray());
     			f.createSMA(frame);
     	  			period = 106;
-    	  			title = "weekly - 2 years";
+    	  			title = "Weekly - 2 Years";
     	  			break;
     		case 3: 
     			fileLoc = "C:\\Users\\haseebchaudhry\\git\\repository\\stockAnalysisProgram\\src\\Data\\Monthly - 5 years.txt";
@@ -84,7 +87,7 @@ public class subPlot extends ApplicationFrame {
     			f.createDateArray(r.getArray());
     			f.createSMA(frame);
       				period = f.values.length;
-      				title = "monthly - 5 years";
+      				title = "Monthly - 5 Years";
       				break;
     	}
         // create subplot 1...
@@ -174,20 +177,20 @@ public class subPlot extends ApplicationFrame {
         // create dataset 2...
         final XYSeries series2 = new XYSeries("MACD");
 
-        series2.add(10.0, 16853.2);
-        series2.add(20.0, 19642.3);
-        series2.add(30.0, 18253.5);
-        series2.add(40.0, 15352.3);
-        series2.add(50.0, 13532.0);
-        series2.add(100.0, 12635.3);
-        series2.add(110.0, 13998.2);
-        series2.add(120.0, 11943.2);
-        series2.add(130.0, 16943.9);
-        series2.add(140.0, 17843.2);
-        series2.add(150.0, 16495.3);
-        series2.add(160.0, 17943.6);
-        series2.add(170.0, 18500.7);
-        series2.add(180.0, 19595.9);
+        series2.add(10.0, 16.2);
+        series2.add(20.0, 19.3);
+        series2.add(30.0, 18.5);
+        series2.add(40.0, 15.3);
+        series2.add(50.0, 13.0);
+        series2.add(100.0, 12.3);
+        series2.add(110.0, 13.2);
+        series2.add(120.0, 11.2);
+        series2.add(130.0, 13.9);
+        series2.add(140.0, 13.2);
+        series2.add(150.0, 16.3);
+        series2.add(160.0, 17.6);
+        series2.add(170.0, 18.7);
+        series2.add(180.0, 19.9);
 
         return new XYSeriesCollection(series2);
 
@@ -198,20 +201,20 @@ public class subPlot extends ApplicationFrame {
         // create dataset 3...
         final XYSeries series2 = new XYSeries("Fast Stochastic");
 
-        series2.add(10.0, 16853.2);
-        series2.add(20.0, 19642.3);
-        series2.add(30.0, 18253.5);
-        series2.add(40.0, 15352.3);
-        series2.add(50.0, 13532.0);
-        series2.add(100.0, 12635.3);
-        series2.add(110.0, 13998.2);
-        series2.add(120.0, 11943.2);
-        series2.add(130.0, 16943.9);
-        series2.add(140.0, 17843.2);
-        series2.add(150.0, 16495.3);
-        series2.add(160.0, 17943.6);
-        series2.add(170.0, 18500.7);
-        series2.add(180.0, 19595.9);
+        series2.add(10.0, 16.2);
+        series2.add(20.0, 19.3);
+        series2.add(30.0, 13.5);
+        series2.add(40.0, 12.3);
+        series2.add(50.0, 12.0);
+        series2.add(100.0, 35.3);
+        series2.add(110.0, 18.2);
+        series2.add(120.0, 13.2);
+        series2.add(130.0, 43.9);
+        series2.add(140.0, 13.2);
+        series2.add(150.0, 15.3);
+        series2.add(160.0, 43.6);
+        series2.add(170.0, 10.7);
+        series2.add(180.0, 15.9);
 
         return new XYSeriesCollection(series2);
 
