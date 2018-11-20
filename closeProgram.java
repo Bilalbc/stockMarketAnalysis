@@ -1,3 +1,4 @@
+package stockAnalysisProgram;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

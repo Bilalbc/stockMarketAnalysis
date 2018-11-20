@@ -1,23 +1,40 @@
+package stockAnalysisProgram;
 
 import java.awt.Container;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.JFrame;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickMarkPosition;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
 import com.sun.prism.BasicStroke;
 
+import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.time.Day;
@@ -47,7 +64,41 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+import yahoofinance.histquotes.HistoricalQuote;
 import javafx.scene.paint.Color;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
+import javafx.scene.*;
+
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.DateTickMarkPosition;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.RefineryUtilities;
+import javafx.scene.image.*;
+
+
+import stockAnalysisProgram.formulas;
+import stockAnalysisProgram.readFile;
+
 
 
 public class launchPage extends Application{
@@ -55,9 +106,29 @@ public class launchPage extends Application{
 	Scene launch, main, emailPage;
 	Label timInterval;
 	ListView<String> listView;
+	
+	private static String fileLoc;
+	private String title;
+ 	private int period = 0;
+ 	private formulas f;
+ 	private int frame = 20;
+	readFile r;
+
+
+	public ArrayList <String> emails = new ArrayList();
 
 	
 	public void start(Stage primaryStage) throws Exception {
+		
+		yahooFinance stats = new yahooFinance();
+		String date = stats.getDate("GLD").toString();
+		String close = stats.getClosePrice("GLD").toString();
+		String open = stats.getOpeningPrice("GLD").toString();
+		String high = stats.getHighestPrice("GLD").toString();
+		String low = stats.getLowestPrice("GLD").toString();
+		String vol = stats.getVolume("GLD").toString();
+
+		
 		window = primaryStage;
 		window.setTitle("SmartInvest");
 		window.setResizable(false);
@@ -84,7 +155,7 @@ public class launchPage extends Application{
 		
 		Button loginButton = new Button("Next");
 		loginButton.setOnAction(e -> {
-			System.out.println(newInput.getText());
+			emails.add(newInput.getText());
 			listView.getItems().addAll(newInput.getText());
 			window.setScene(main);
 		});
@@ -116,37 +187,37 @@ public class launchPage extends Application{
 		layout2.setConstraints(title2, 2,4);
 		
 
-		Label openingPrice = new Label("Opening Price:");
+		Label openingPrice = new Label("Opening Price: " + open);
 		openingPrice.setFont(new Font("Arial", 20));
 		openingPrice.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(openingPrice, 2,25);
 		
-		Label highestPrice = new Label("Highest Price:");
+		Label highestPrice = new Label("Highest Price: " + high);
 		highestPrice.setFont(new Font("Arial", 20));
 		highestPrice.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(highestPrice, 2,30);
 		
-		Label lowestPrice = new Label("Lowest Price:");
+		Label lowestPrice = new Label("Lowest Price: " + low);
 		lowestPrice.setFont(new Font("Arial", 20));
 		lowestPrice.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(lowestPrice, 2,35);
 		
-		Label closePrice = new Label("Close Price:");
+		Label closePrice = new Label("Close Price: " + close);
 		closePrice.setFont(new Font("Arial", 20));
 		closePrice.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(closePrice, 40,25);
 		
-		Label volume = new Label("Volume(Number of trades):");
+		Label volume = new Label("Volume(Number of trades): " + vol);
 		volume.setFont(new Font("Arial", 20));
 		volume.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(volume, 40,30);
-		
+
 		Label change = new Label("Change(In price):");
 		change.setFont(new Font("Arial", 20));
 		change.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(change, 40,35);
 		
-		Label time = new Label("Date:");
+		Label time = new Label("Date: " + date);
 		time.setFont(new Font("Arial", 20));
 		time.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(time, 2,10);
@@ -168,31 +239,41 @@ public class launchPage extends Application{
 		//stocksMenu.setStyle("-fx-background-color: blue");
 		layout2.setConstraints(freq, 40, 51);
 		
-		Button set = new Button("Draw Graoh");
+		Button set = new Button("Draw Graph");
+		set.setOnAction(e -> {
+			int choice;
+			if (freq.getValue().equals("Daily") & (stocksMenu.getValue().equals("ABX"))) {
+			drawGraph(1);
+			}
+			else if (freq.getValue().equals("Weekly") & (stocksMenu.getValue().equals("ABX"))){
+			drawGraph(2);
+			}
+			else if (freq.getValue().equals("Monthly") & (stocksMenu.getValue().equals("ABX")))
+			drawGraph(3);
+			
+		});
 		layout2.setConstraints(set, 30, 50);	
 		
 		Button addEmail = new Button("Add emails");
-		layout2.setConstraints(addEmail,30,60);
+		layout2.setConstraints(addEmail,2,55);
 		addEmail.setOnAction(e -> {
 			window.setScene(emailPage);
 		});
+		
+		Image back = new Image("https://www.bing.com/images/search?view=detailV2&ccid=%2bo0SYvQy&id=80F8C1BB75CF16320F61C1E2070609CB43587D00&thid=OIP.-o0SYvQygpu97caWhvqprQHaE_&mediaurl=https%3a%2f%2fstandardoracle.com%2fwp-content%2fuploads%2f2017%2f02%2fstocks-930x627.jpg&exph=627&expw=930&q=stocks+logo&simid=608016618527788816&selectedIndex=31");
+		ImageView mv = new ImageView(back);
+		Group root = new Group();
+		root.getChildren().addAll(mv);
+		layout2.setConstraints(root, 50,50);
 	
 		
-		  readFile r = new readFile();
-		  r.makeArray(); 
-		  formulas f = new formulas();
-		  f.createValues(r.getArray());
-		  f.createDateArray(r.getArray());
-		  
 		 
-		  SwingNode testGraph = GraphTest();
-		  layout2.setConstraints(testGraph,2,50);
 		  
 		 //Open, high, low, close, volume
 
 		
-		layout2.getChildren().addAll(testGraph, highestPrice, lowestPrice, time, title2, openingPrice, volume, change, closePrice, graphDisplay, stocksMenu
-				, freq, set, addEmail);
+		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, change, closePrice, graphDisplay, stocksMenu
+				,freq, set, addEmail);
 		layout2.setStyle("-fx-background-color: black");
 		main = new Scene(layout2,1200,1200);
 		
@@ -236,16 +317,19 @@ public class launchPage extends Application{
 			
 			add.setOnAction(e -> {
 				listView.getItems().addAll(emailAddition.getText());
+				emails.add(emailAddition.getText());
+				
 			});
 			
 			Button send = new Button("Send Now");
 			layout3.setConstraints(send,0,4);
 			send.setOnAction(e->{
+				sendEmails sendEmail = new sendEmails();
+				sendEmail.emailCode(emails, date, close, open, high, low, vol);
 				buttonClicked();
 			});
 		 
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
-			
 			
 			window.show();
 	
@@ -267,8 +351,7 @@ public class launchPage extends Application{
 		for (String e:emails) {
 			message += e + "\n";
 		}
-		
-		System.out.println("Emails sent to:\n" + message);
+	
 		
 	}
 	
@@ -284,54 +367,24 @@ public class launchPage extends Application{
     //f.values.length
 
     return dataset;
-
-		
+    	
 	}
 	
-	private SwingNode GraphTest () {
-		 readFile r = new readFile();
-		  r.makeArray(); 
-		  formulas f = new formulas();
-		  f.createValues(r.getArray());
-		  f.createDateArray(r.getArray());
-		  
-		  org.jfree.chart.JFreeChart xyLineChart = ChartFactory.createXYLineChart(
-	                "test",
-	                "Month","Price",
-	                createDataset(f.getDates(), f.getValues()),
-	                PlotOrientation.VERTICAL,
-	                true,true,false);
-	        final XYPlot plot = xyLineChart.getXYPlot( );
-
-	        //formating xAxis as months
-	        DateAxis xAxis = new DateAxis ("Date");
-	        //from start of array(2013) to end of array(2018)
-	        xAxis.setRange(f.dateArray[0], f.dateArray[f.dateArray.length-1]);
-	        xAxis.setDateFormatOverride(new SimpleDateFormat("MMM"));
-	        xAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
-
-	        //drawing lines in graph
-	        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer( );
-	        renderer.setBaseShapesVisible(false);
-	        
-
-	        ChartPanel chartPanel = new ChartPanel( xyLineChart );
-	        chartPanel.setPreferredSize( new java.awt.Dimension( 560 , 367 ) );
+	
+	
 	 
-
-	        plot.setDomainAxis(xAxis);
-	        plot.setRenderer( renderer );
-		  
-		  final SwingNode chartSwingNode = new SwingNode();
-		  chartSwingNode.setContent(
-			      new ChartPanel(
-			    	xyLineChart
-			      )      
-			    );
-		  return chartSwingNode;
 	
 	
-	}
+	
+	 
+	 
+	 public void drawGraph (int change) {
+		 subPlot chart = new subPlot("ABX", change);
+			chart.pack();
+		    RefineryUtilities.centerFrameOnScreen(chart);
+		    chart.setVisible(true);
+	 }
+	 
+	 
 }
-	
 
