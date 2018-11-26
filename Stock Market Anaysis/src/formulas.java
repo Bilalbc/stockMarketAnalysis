@@ -1,8 +1,9 @@
-package stockAnalysisProgram;
-import java.util.*;  
+import java.util.*;   
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+
+import com.tictactec.ta.lib.RetCode;
 
 
 public class formulas {
@@ -16,14 +17,15 @@ public class formulas {
 	//Open	High	Low	Close*	Adj Close**	Volume
 	Date [] dateArray;
 	double [][] values;
-	double [][] bollingerBand;
+	float [][] SMAPeriod;
 	
 	public formulas (String string) {
 		
 		r = new readFile(string);
 		 
-		values = new double [r.findRows()][9];
-		dateArray = new Date[r.findRows()];
+		values = new double [r.findRows()][11];
+		SMAPeriod = new float [r.findRows()][2];
+		dateArray = new Date[r.findRows()]; 
 	}
 	
 	public void createDateArray(String [][] n) {
@@ -52,28 +54,23 @@ public class formulas {
 			}
 		}
 	}
-	
-	public void createSMA(int period) {
+	public double createSMA(int period, int s) {
 		double sum = 0;
 		int divisor = 0;
-		int start = period;
+		int start = s;
 		SMA =0;//simple moving average
 		
-		for(int j=period;j<values.length;j++) {
 			for(int i=1;i<period+1;i++) {
 				if(start>values.length) {
-					return;
+					return 1;
 				}
 				sum+=values[start-i][4];//getting close values
 				divisor++;	
 			}
 			SMA = sum/divisor;
-			values[j][7]=SMA;
-			divisor = 0;
+			//values[j][7]=SMA;
 		
-			sum = 0;
-			start+=1;
-		}
+			return SMA;
 	}
 	public void createBollinger(int period) {
 		int start = period;
@@ -81,8 +78,12 @@ public class formulas {
 		double lower;//lower bollinger line
 		
 		SD = 0; //standard deviation
+
+		//getting SMA
+		for(int j=period;j<values.length;j++) {
+			values[j][7]=createSMA(period,j);
+		}
 		
-		//calculating SMA
 		for(int j=period;j<values.length;j++) {
 			//calculating standard deviation
 			for(int i=1;i<period+1;i++) {
@@ -99,11 +100,60 @@ public class formulas {
 		}
 	}
 	
-	public void createEMA() {
-		
-	}
 	public void createMACD() {
+		//12 day SMA - 26 day SMA
 		
+		for(int i=12;i<values.length;i++) {
+			SMAPeriod[i][0] = (float) createSMA(12, i);
+			System.out.println(SMAPeriod[i][0]);
+		}
+		
+		for(int i=26;i<values.length;i++) {
+			SMAPeriod[i][1] = (float) createSMA(26, i);
+			System.out.println(SMAPeriod[i][1]);
+		}
+		
+		//calculating MACD
+		for(int i=26;i<values.length;i++) {
+			values[i][9] = SMAPeriod[i][0]-SMAPeriod[i][1];
+		}
+	}
+	
+	public void createSignalLine() {
+		//9 day SMA of MACD Line
+		double sum = 0;
+		int divisor = 0;
+		int start = 9;
+		SMA =0;//simple moving average
+		
+		for(int j=9;j<values.length;j++) {
+			for(int i=1;i<9+1;i++) {
+				if(start>values.length) {
+					return;
+				}
+				sum+=values[start-i][9];//getting close values
+				divisor++;	
+			}
+			SMA = sum/divisor;
+			values[j][10] = SMA;
+			divisor =0;
+			
+			sum =0;
+			start +=1;
+		}
+	}
+	
+	public void createFS() {
+		double highestHigh = values[0][4];
+		double lowestLow = values[0][4];
+		
+		for(int i=0;i<values.length;i++) {
+			if(values[i][4]>highestHigh)
+				highestHigh = values[i][4];
+			
+			if(values[i][4]<lowestLow)
+				lowestLow = values[i][4];
+		}
 	}
 	
 	public void printValues() {
@@ -129,8 +179,5 @@ public class formulas {
 	public Date[] getDates(){
 		return dateArray;
 	}
-	
-	public double [][] getBollinger(){
-		return bollingerBand;
-	}
+
 }
