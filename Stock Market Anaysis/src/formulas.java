@@ -1,9 +1,8 @@
+package stockAnalysisProgram;
 import java.util.*;   
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-
-import com.tictactec.ta.lib.RetCode;
 
 
 public class formulas {
@@ -60,7 +59,7 @@ public class formulas {
 		int start = s;
 		SMA =0;//simple moving average
 		
-			for(int i=1;i<period+1;i++) {
+			for(int i=1;i<=period;i++) {
 				if(start>values.length) {
 					return 1;
 				}
@@ -68,36 +67,36 @@ public class formulas {
 				divisor++;	
 			}
 			SMA = sum/divisor;
-			//values[j][7]=SMA;
-		
+
 			return SMA;
 	}
 	public void createBollinger(int period) {
 		int start = period;
 		double upper;//upper bollinger line
 		double lower;//lower bollinger line
-		
 		SD = 0; //standard deviation
 
 		//getting SMA
 		for(int j=period;j<values.length;j++) {
 			values[j][7]=createSMA(period,j);
 		}
-		
 		for(int j=period;j<values.length;j++) {
 			//calculating standard deviation
-			for(int i=1;i<period+1;i++) {
-				SD +=Math.pow(values[start-i][4]-values[start-i][7], 2);
-				SD = Math.sqrt(SD/period);
-			}
+			for(int i=0;i<period;i++) 
+				SD +=Math.pow(values[start-i][4]-values[start][7], 2);
+			
+			SD = Math.sqrt(SD/period);
+				
 			upper = values[j][7] + (2*SD);
 			lower = values[j][7] - (2*SD);
 			
 			values[j][8] = lower;
 			values[j][6] = upper;
+
+			start++;
+			SD = 0;
 			
-			start+=1;
-		}
+		}	
 	}
 	
 	public void createMACD() {
@@ -105,12 +104,12 @@ public class formulas {
 		
 		for(int i=12;i<values.length;i++) {
 			SMAPeriod[i][0] = (float) createSMA(12, i);
-			System.out.println(SMAPeriod[i][0]);
+			//System.out.println(SMAPeriod[i][0]);
 		}
 		
 		for(int i=26;i<values.length;i++) {
 			SMAPeriod[i][1] = (float) createSMA(26, i);
-			System.out.println(SMAPeriod[i][1]);
+		//	System.out.println(SMAPeriod[i][1]);
 		}
 		
 		//calculating MACD
@@ -127,11 +126,11 @@ public class formulas {
 		SMA =0;//simple moving average
 		
 		for(int j=9;j<values.length;j++) {
-			for(int i=1;i<9+1;i++) {
+			for(int i=1;i<10;i++) {
 				if(start>values.length) {
 					return;
 				}
-				sum+=values[start-i][9];//getting close values
+				sum+=values[start-i][9];//getting MACD values
 				divisor++;	
 			}
 			SMA = sum/divisor;

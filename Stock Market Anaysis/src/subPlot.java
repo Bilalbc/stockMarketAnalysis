@@ -1,5 +1,4 @@
-
-
+package stockAnalysisProgram;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.List;
@@ -18,6 +17,7 @@ import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickMarkPosition;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -111,9 +111,13 @@ public class subPlot extends ApplicationFrame {
         final XYItemRenderer renderer1 = new StandardXYItemRenderer();
         	renderer1.setSeriesPaint( 0 , Color.BLACK );
         	renderer1.setSeriesPaint( 1 , Color.RED );
-        	renderer1.setSeriesPaint( 2 , Color.RED );
+        	renderer1.setSeriesPaint( 2 , Color.BLUE);
         	renderer1.setSeriesPaint( 3 , Color.RED );
+        	
         final NumberAxis rangeAxis1 = new NumberAxis("");
+        rangeAxis1.setTickUnit(new NumberTickUnit(2));
+        
+        
         subplot1 = new XYPlot(data1, null, rangeAxis1, renderer1);
         	subplot1.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
    
@@ -135,8 +139,7 @@ public class subPlot extends ApplicationFrame {
         subplot3 = new XYPlot(data3, null, rangeAxis3, renderer3);
         	subplot3.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
         
-        NumberAxis yAxis = new NumberAxis("Price");
-        
+
         
 	    //formating xAxis as months
 	    DateAxis xAxis = new DateAxis ("");
@@ -144,6 +147,8 @@ public class subPlot extends ApplicationFrame {
 	    xAxis.setRange(f.dateArray[frame], f.dateArray[f.dateArray.length-1]);
 	    xAxis.setDateFormatOverride(new SimpleDateFormat("MMM"));
 	    xAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
+	    
+	    
 	    
         // parent plot...
         final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(new NumberAxis("Domain"));
@@ -153,7 +158,6 @@ public class subPlot extends ApplicationFrame {
         plot.add(subplot1, 20);
         plot.add(subplot2, 10);
         plot.add(subplot3, 10);
-        plot.setRangeAxis(yAxis);
         plot.setDomainAxis(xAxis);
         plot.setOrientation(PlotOrientation.VERTICAL);
 
@@ -180,7 +184,7 @@ public class subPlot extends ApplicationFrame {
     	
     	  final TimeSeries trend = new TimeSeries("Data");  
 	      final TimeSeries bollingerUpper = new TimeSeries("Bollinger");
-	      final TimeSeries bollingerMiddle = new TimeSeries("Bollinger"); 
+	      final TimeSeries SMA = new TimeSeries("SMA(20)"); 
 	      final TimeSeries bollingerLower = new TimeSeries("Bollinger"); 
 	      
 	     // XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
@@ -188,7 +192,7 @@ public class subPlot extends ApplicationFrame {
 	      for(int i=20;i<period;i++) {
 	    	
 	    		  bollingerLower.addOrUpdate(new Day(d[i]), x[i][8]);
-	    		  bollingerMiddle.addOrUpdate(new Day(d[i]), x[i][7]);   
+	    		  SMA.addOrUpdate(new Day(d[i]), x[i][7]);   
 	    		  bollingerUpper.addOrUpdate(new Day(d[i]), x[i][6]);   
 
 	      }
@@ -198,7 +202,7 @@ public class subPlot extends ApplicationFrame {
       TimeSeriesCollection dataset = new TimeSeriesCollection();          
       dataset.addSeries( trend ); 
       dataset.addSeries(bollingerLower);
-      dataset.addSeries(bollingerMiddle);  
+      dataset.addSeries(SMA);  
       dataset.addSeries(bollingerUpper);  
 	  
       //f.values.length
