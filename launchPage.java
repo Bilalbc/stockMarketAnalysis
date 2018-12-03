@@ -1,42 +1,9 @@
 package stockAnalysisProgram;
 
-import java.awt.Container;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.swing.JFrame;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickMarkPosition;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-
-import com.sun.prism.BasicStroke;
-
-import org.jfree.chart.plot.CombinedDomainXYPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -103,7 +70,7 @@ import stockAnalysisProgram.readFile;
 
 public class launchPage extends Application{
 	Stage window;
-	Scene launch, main, emailPage;
+	Scene launch, main, emailPage, search;
 	Label timInterval;
 	ListView<String> listView;
 	
@@ -121,12 +88,14 @@ public class launchPage extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		
 		yahooFinance stats = new yahooFinance();
-		String date = stats.getDate("GLD").toString();
-		String close = stats.getClosePrice("GLD").toString();
-		String open = stats.getOpeningPrice("GLD").toString();
-		String high = stats.getHighestPrice("GLD").toString();
-		String low = stats.getLowestPrice("GLD").toString();
-		String vol = stats.getVolume("GLD").toString();
+		String date = stats.getDate("ABX").toString();
+		String close = stats.getClosePrice("ABX").toString();
+		String open = stats.getOpeningPrice("ABX").toString();
+		String high = stats.getHighestPrice("ABX").toString();
+		String low = stats.getLowestPrice("ABX").toString();
+		String vol = stats.getVolume("ABX").toString();
+		
+		
 
 		
 		window = primaryStage;
@@ -260,14 +229,12 @@ public class launchPage extends Application{
 			window.setScene(emailPage);
 		});
 		
-		Image back = new Image("https://www.bing.com/images/search?view=detailV2&ccid=%2bo0SYvQy&id=80F8C1BB75CF16320F61C1E2070609CB43587D00&thid=OIP.-o0SYvQygpu97caWhvqprQHaE_&mediaurl=https%3a%2f%2fstandardoracle.com%2fwp-content%2fuploads%2f2017%2f02%2fstocks-930x627.jpg&exph=627&expw=930&q=stocks+logo&simid=608016618527788816&selectedIndex=31");
-		ImageView mv = new ImageView(back);
-		Group root = new Group();
-		root.getChildren().addAll(mv);
-		layout2.setConstraints(root, 50,50);
-	
+		Button searchStocks = new Button("Search");
+		layout2.setConstraints(searchStocks,70,70);
+		searchStocks.setOnAction(e -> {
+			window.setScene(search);
+		});
 		
-		 
 		  
 		 //Open, high, low, close, volume
 
@@ -331,6 +298,24 @@ public class launchPage extends Application{
 		 
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
 			
+			GridPane.setConstraints(loginButton, 6, 15);
+			//Label Title
+		
+	
+			//Search Page
+			
+			
+			/*GridPane layout4 = new GridPane();
+			layout3.setPadding(new Insets(10,10,10,10));
+			//The spacing vertically is 8 and horizonatlly is 10.
+			layout3.setVgap(1);
+			layout3.setHgap(1);
+			
+			layout4.getChildren().addAll();
+			layout4.setStyle("-fx-background-color: black");
+			search = new Scene(grid,400,300);
+			search.setFill(Color.BLACK);*/
+			
 			window.show();
 	
 	}
@@ -369,14 +354,6 @@ public class launchPage extends Application{
     return dataset;
     	
 	}
-	
-	
-	
-	 
-	
-	
-	
-	 
 	 
 	 public void drawGraph (int change) {
 		 subPlot chart = new subPlot("ABX", change);
@@ -384,6 +361,8 @@ public class launchPage extends Application{
 		    RefineryUtilities.centerFrameOnScreen(chart);
 		    chart.setVisible(true);
 	 }
+	 
+	 
 	 
 	 
 }

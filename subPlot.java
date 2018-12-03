@@ -68,14 +68,14 @@ public class subPlot extends ApplicationFrame {
       				title = "Daily - 6 Months"; 
       				break;
     		case 2: 
-    			fileLoc = "C:\\\\\\\\Users\\\\\\\\momo_\\\\\\\\Documents\\\\\\\\Com Sci\\\\\\\\Data\\\\\\\\Weekly - 2 years.txt";
+    			fileLoc = "C:\\\\Users\\\\momo_\\\\Documents\\\\Com Sci\\\\Data\\\\Weekly - 2 years.txt";
     			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
     			r.makeArray(); 
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
     			f.createSMA(frame);
-    	  			period = 106;
+    	  			period = 100;
     	  			title = "Weekly - 2 Years";
     	  			break;
     		case 3: 
