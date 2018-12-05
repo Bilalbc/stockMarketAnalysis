@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
 public class sendEmails {
 
 	
-	 public static void emailCode (ArrayList<String>emails, String date, String close,String open,String high,String low, String vol) {
+	 public static void emailCode (ArrayList<String>emails, String date, String symbol, String close,String open,String high,String low, String vol) {
 
 		  
 		  String [] emailArray = emails.toArray(new String[emails.size()]);
@@ -38,7 +38,7 @@ public class sendEmails {
 		   Message msg = new MimeMessage(ss);
 		   msg.setFrom(new InternetAddress(myEmail));
 		   msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(opponentEmail));
-		   msg.setSubject("Stocks for GLD on the date " + date );
+		   msg.setSubject("Stock " + symbol + " on the date " + date );
 		   msg.setText("Closing Price: " + close
 				   	+ "\nOpening Price: " + open
 				   	+ "\nHigh Price " + high

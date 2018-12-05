@@ -11,7 +11,7 @@ public class analyzeStock {
 	public void historyStock () throws IOException {
 		
 		yahooFinance history = new yahooFinance();
- 		history.getHistory("GLD", 2, "Daily");
+ 		history.getHistory("GLD", 2, "Monthly");
  		String[]stockNames = new String[]{"GLD","ABX","SLV"};
  		System.out.println(history.getStock(stockNames));
  		

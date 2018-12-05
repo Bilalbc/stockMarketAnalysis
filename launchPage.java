@@ -2,6 +2,7 @@ package stockAnalysisProgram;
 
 
 import java.util.ArrayList;
+
 import java.util.Date;
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.data.time.Day;
@@ -36,6 +37,7 @@ import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -74,6 +76,8 @@ public class launchPage extends Application{
 	Label timInterval;
 	ListView<String> listView;
 	
+	String close,open,vol,symbol2,high,low,date;
+	
 	private static String fileLoc;
 	private String title;
  	private int period = 0;
@@ -88,16 +92,9 @@ public class launchPage extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		
 		yahooFinance stats = new yahooFinance();
-		String date = stats.getDate("ABX").toString();
-		String close = stats.getClosePrice("ABX").toString();
-		String open = stats.getOpeningPrice("ABX").toString();
-		String high = stats.getHighestPrice("ABX").toString();
-		String low = stats.getLowestPrice("ABX").toString();
-		String vol = stats.getVolume("ABX").toString();
-		
-		
+		//String date = stats.getDate("ABX").toString();
+		//String close = stats.getClosePrice("ABX").toString();
 
-		
 		window = primaryStage;
 		window.setTitle("SmartInvest");
 		window.setResizable(false);
@@ -150,6 +147,13 @@ public class launchPage extends Application{
 		layout2.setVgap(1);
 		layout2.setHgap(1);
 		
+		TextField symbol = new TextField("ex.GLD");
+		layout2.setConstraints(symbol,90,20);
+		
+		Button searchSymbol = new Button("Search");
+		layout2.setConstraints(searchSymbol,30,30);
+	
+		
 		Label title2 = new Label("SmartInvest");
 		title2.setFont(new Font("Arial", 40));
 		title2.setTextFill(Color.web("#0076a3"));
@@ -191,16 +195,15 @@ public class launchPage extends Application{
 		time.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(time, 2,10);
 		
+		Label stock = new Label("Symbol " + symbol2);
+		stock.setFont(new Font("Arial", 20));
+		stock.setTextFill(Color.web("#0076a3"));
+		layout2.setConstraints(stock, 2,20);
+		
 		Label graphDisplay = new Label("Graph Display:");
 		graphDisplay.setFont(new Font("Arial", 20));
 		graphDisplay.setTextFill(Color.web("#0076a3"));
 		layout2.setConstraints(graphDisplay, 2, 40);
-		
-		ChoiceBox <String> stocksMenu = new ChoiceBox<>();
-		stocksMenu.getItems().addAll("GLD", "SLV", "ABX");
-		stocksMenu.setValue("SLV");
-		//stocksMenu.setStyle("-fx-background-color: blue");
-		layout2.setConstraints(stocksMenu, 40, 50);
 		
 		ChoiceBox <String> freq = new ChoiceBox<>();
 		freq.getItems().addAll("Daily", "Weekly", "Monthly");
@@ -208,16 +211,47 @@ public class launchPage extends Application{
 		//stocksMenu.setStyle("-fx-background-color: blue");
 		layout2.setConstraints(freq, 40, 51);
 		
+		searchSymbol.setOnAction(e -> {
+			yahooFinance search = new yahooFinance();
+			String symb = symbol.getText();
+			try {
+				
+				symbol2 = search.getSymbol(symb).toString();
+				date = search.getDate(symb).toString();
+			    open = search.getOpeningPrice(symb).toString();
+			    close = search.getClosePrice(symb).toString();
+				high = search.getHighestPrice(symb).toString();
+			    low = search.getLowestPrice(symb).toString();
+				vol = search.getVolume(symb).toString();
+				
+				stock.setText("Symbol: " + symbol2);
+				time.setText("Date: " + date);
+				openingPrice.setText("Opening Price: " + open);
+				closePrice.setText("Close Price: " + close);
+				highestPrice.setText("Highest Price: " + high);
+				lowestPrice.setText("Lowest Price: " + low);
+				volume.setText("Volume: " + vol);
+				
+				sendingQuotes send = new sendingQuotes();
+		 		send.sendQuotes(symb);
+				
+			} catch (IOException e1) {
+				e1.printStackTrace();
+	
+			}
+			
+		});
+		
 		Button set = new Button("Draw Graph");
 		set.setOnAction(e -> {
 			int choice;
-			if (freq.getValue().equals("Daily") & (stocksMenu.getValue().equals("ABX"))) {
+			if (freq.getValue().equals("Daily")) {
 			drawGraph(1);
 			}
-			else if (freq.getValue().equals("Weekly") & (stocksMenu.getValue().equals("ABX"))){
+			else if (freq.getValue().equals("Weekly")){
 			drawGraph(2);
 			}
-			else if (freq.getValue().equals("Monthly") & (stocksMenu.getValue().equals("ABX")))
+			else if (freq.getValue().equals("Monthly"))
 			drawGraph(3);
 			
 		});
@@ -229,18 +263,13 @@ public class launchPage extends Application{
 			window.setScene(emailPage);
 		});
 		
-		Button searchStocks = new Button("Search");
-		layout2.setConstraints(searchStocks,70,70);
-		searchStocks.setOnAction(e -> {
-			window.setScene(search);
-		});
 		
 		  
 		 //Open, high, low, close, volume
 
 		
-		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, change, closePrice, graphDisplay, stocksMenu
-				,freq, set, addEmail);
+		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, change, closePrice, graphDisplay
+				,freq, set, addEmail, symbol, searchSymbol, stock);
 		layout2.setStyle("-fx-background-color: black");
 		main = new Scene(layout2,1200,1200);
 		
@@ -292,29 +321,13 @@ public class launchPage extends Application{
 			layout3.setConstraints(send,0,4);
 			send.setOnAction(e->{
 				sendEmails sendEmail = new sendEmails();
-				sendEmail.emailCode(emails, date, close, open, high, low, vol);
+				sendEmail.emailCode(emails, date, symbol2, close, open, high, low, vol);
 				buttonClicked();
 			});
 		 
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
-			
 			GridPane.setConstraints(loginButton, 6, 15);
-			//Label Title
-		
 	
-			//Search Page
-			
-			
-			/*GridPane layout4 = new GridPane();
-			layout3.setPadding(new Insets(10,10,10,10));
-			//The spacing vertically is 8 and horizonatlly is 10.
-			layout3.setVgap(1);
-			layout3.setHgap(1);
-			
-			layout4.getChildren().addAll();
-			layout4.setStyle("-fx-background-color: black");
-			search = new Scene(grid,400,300);
-			search.setFill(Color.BLACK);*/
 			
 			window.show();
 	

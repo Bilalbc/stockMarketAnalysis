@@ -104,7 +104,7 @@ public class yahooFinance {
 			List<HistoricalQuote> history = stock.getHistory(from, to, getInterval(searchType));
 			for (HistoricalQuote quote : history) {
 				System.out.println("====================================");
-				System.out.println("symobol : " + quote.getSymbol());
+				System.out.println("symbol : " + quote.getSymbol());
 				System.out.println("date : " + convertDate(quote.getDate()));
 				System.out.println("High Price  : " + quote.getHigh());
 				System.out.println("Low Price : " + quote.getLow());

@@ -24,11 +24,12 @@ public class sendingQuotes {
 	private String filepathABX2 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Weekly - 2 years.txt";
 	private String filepathABX3 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Monthly - 5 years.txt";
 	
-	public void sendQuotes () throws IOException {
+	public void sendQuotes (String symbol) throws IOException {
 	yahooFinance readToSend = new yahooFinance();
-    ArrayList<String> arrayABX1 = new ArrayList<String>(readToSend.readToHistory("ABX", 1 , "Daily"));	
-	ArrayList<String> arrayABX2 = new ArrayList<String>(readToSend.readToHistory("ABX", 2, "Weekly"));
-	//ArrayList<String> arrayABX3 = new ArrayList<String>(readToSend.readToHistory("ABX", 5, "Monthly"));
+	String symb = symbol;
+    ArrayList<String> arrayABX1 = new ArrayList<String>(readToSend.readToHistory(symb, 1 , "Daily"));	
+	ArrayList<String> arrayABX2 = new ArrayList<String>(readToSend.readToHistory(symb, 2, "Weekly"));
+	//ArrayList<String> arrayABX3 = new ArrayList<String>(readToSend.readToHistory(symb, 5, "Monthly"));
 	   
 	  saveToFile(filepathABX1, arrayABX1);
 	  saveToFile(filepathABX2, arrayABX2);
