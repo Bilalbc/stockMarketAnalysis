@@ -1,4 +1,4 @@
-package stockAnalysisProgram;
+package stockMarketAnalysis;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.List;
@@ -40,6 +40,8 @@ public class subPlot extends ApplicationFrame {
 	private int period = 0;
 	private formulas f;
 	private int frame = 20;
+	private int rangeUpper;
+	private int rangeLower;
 	
 	LinkedList subTitles = new LinkedList();
 	
@@ -77,7 +79,6 @@ public class subPlot extends ApplicationFrame {
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
     			f.createBollinger(frame);
-    			//f.createSMA(frame);
       				period = 130;
       				title = "Daily - 6 Months"; 
       				break;
@@ -89,7 +90,6 @@ public class subPlot extends ApplicationFrame {
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
     			f.createBollinger(frame);
-    			//f.createSMA(frame);
     	  			period = 106;
     	  			title = "Weekly - 2 Years";
     	  			break;
@@ -101,11 +101,11 @@ public class subPlot extends ApplicationFrame {
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
     			f.createBollinger(frame);
-    			//f.createSMA(frame);
       				period = f.values.length;
       				title = "Monthly - 5 Years";
       				break;
     	}
+			
         // create subplot 1...
         final XYDataset data1 = createDataset1(f.getDates(), f.getValues());
         final XYItemRenderer renderer1 = new StandardXYItemRenderer();
@@ -114,8 +114,10 @@ public class subPlot extends ApplicationFrame {
         	renderer1.setSeriesPaint( 2 , Color.BLUE);
         	renderer1.setSeriesPaint( 3 , Color.RED );
         	
+        	//rangeLower = f.getLowest()-4;
         final NumberAxis rangeAxis1 = new NumberAxis("");
-        rangeAxis1.setTickUnit(new NumberTickUnit(2));
+        rangeAxis1.setRange(f.getLowest()-5, f.getHighest()+3);
+        rangeAxis1.setTickUnit(new NumberTickUnit(0.5));
         
         
         subplot1 = new XYPlot(data1, null, rangeAxis1, renderer1);
@@ -126,6 +128,7 @@ public class subPlot extends ApplicationFrame {
         final XYItemRenderer renderer2 = new StandardXYItemRenderer();
         	renderer2.setSeriesPaint(0, Color.RED);
         	renderer2.setSeriesPaint(1, Color.BLUE);
+        	renderer2.setSeriesPaint(2, Color.BLACK);
         final NumberAxis rangeAxis2 = new NumberAxis("");
         subplot2 = new XYPlot(data2, null, rangeAxis2, renderer2);
         	subplot2.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
@@ -174,7 +177,6 @@ public class subPlot extends ApplicationFrame {
 		//subTitles.ad
 		chart.setSubtitles(subTitles);
         
-        
         createPNG();
         
 		return chart;
@@ -217,17 +219,23 @@ public class subPlot extends ApplicationFrame {
     	f.createSignalLine();
         final TimeSeries MACD = new TimeSeries("MACD");
         final TimeSeries signalLine = new TimeSeries("Signal Line");
-
+        final TimeSeries zeroLine = new TimeSeries("");
+        
+        
         for(int i=26;i<period;i++)
         	MACD.addOrUpdate(new Day(d[i]), x[i][9]);
         
         for(int i=26;i<period;i++)
         	signalLine.addOrUpdate(new Day(d[i]), x[i][10]);
         
+        for(int i=0;i<period;i++)
+        	zeroLine.addOrUpdate(new Day(d[i]), 0);
+        
         TimeSeriesCollection dataset = new TimeSeriesCollection(); 
         
         dataset.addSeries(MACD);
         dataset.addSeries(signalLine);
+        dataset.addSeries(zeroLine);
         
         return dataset;
   }
@@ -235,14 +243,25 @@ public class subPlot extends ApplicationFrame {
     private XYDataset createDataset3(Date d [], double x [][]) {
 
         // create dataset 3...
-        final TimeSeries MACD = new TimeSeries("MACD");
+    	f.createK(frame);
+        final TimeSeries K = new TimeSeries("%k");
+        final TimeSeries D = new TimeSeries("%D");
+        final TimeSeries zeroLine = new TimeSeries("");
 
-        for(int i=24;i<period;i++)
-        	MACD.addOrUpdate(new Day(d[i]), x[i][9]);
+        for(int i=20;i<period;i++)
+        	K.addOrUpdate(new Day(d[i]), x[i][11]);
+        
+        for(int i=20;i<period;i++)
+        	D.addOrUpdate(new Day(d[i]), x[i][12]);
+        	
+        for(int i=0;i<period;i++)
+        	zeroLine.addOrUpdate(new Day(d[i]), 0);
         
         TimeSeriesCollection dataset = new TimeSeriesCollection(); 
         
-        dataset.addSeries(MACD);
+        dataset.addSeries(zeroLine);
+        dataset.addSeries(K);
+        dataset.addSeries(D);
         
         return dataset;
 
@@ -267,6 +286,7 @@ public class subPlot extends ApplicationFrame {
 			e.printStackTrace();
 		}
     }
+    
     public static void main(final String[] args) {
   	  Scanner console = new Scanner(System.in);
 	     int choice = console.nextInt();

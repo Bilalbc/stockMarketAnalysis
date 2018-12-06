@@ -1,5 +1,4 @@
-package stockAnalysisProgram;
-import java.util.*;   
+package stockMarketAnalysis;import java.util.*;   
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -18,11 +17,12 @@ public class formulas {
 	double [][] values;
 	float [][] SMAPeriod;
 	
+	
 	public formulas (String string) {
 		
 		r = new readFile(string);
 		 
-		values = new double [r.findRows()][11];
+		values = new double [r.findRows()][13];
 		SMAPeriod = new float [r.findRows()][2];
 		dateArray = new Date[r.findRows()]; 
 	}
@@ -141,20 +141,86 @@ public class formulas {
 			start +=1;
 		}
 	}
-	
-	public void createFS() {
+	public void createK(int period) {
+		int start=period;
 		double highestHigh = values[0][4];
 		double lowestLow = values[0][4];
 		
-		for(int i=0;i<values.length;i++) {
-			if(values[i][4]>highestHigh)
-				highestHigh = values[i][4];
+		for(int i=period;i<values.length;i++) {
+			for(int j=0;j<period;j++) {
+
+				if(start>values.length) 
+					return;
+				
+					if(values[start-j][4]>highestHigh)
+						highestHigh = values[start-j][4];
+					
+					if(values[start-j][4]<lowestLow)
+						lowestLow = values[start-j][4];
+				
+					System.out.println(j);
+					
+					System.out.println(values[j][4]);
+					System.out.println(values[i][11]+"\n");
+				}
 			
-			if(values[i][4]<lowestLow)
-				lowestLow = values[i][4];
-		}
+			System.out.println("####################"+lowestLow);
+			System.out.println("####################"+highestHigh);
+			
+			values[i][11] = ((values[i][4]-lowestLow)/(highestHigh-lowestLow))*100;
+			
+			highestHigh = values[start][4];
+			lowestLow =values[start][4];
+			
+			start++;
+			}
+		createD();
 	}
 	
+	public void createD() {
+		double sum = 0;
+		int divisor = 0;
+		int start = 3;
+		SMA =0;//simple moving average
+		
+		for(int j=3;j<values.length;j++) {
+			for(int i=0;i<3;i++) {
+				if(start>values.length) {
+					return;
+				}
+				sum+=values[start-i][11];//getting %k Values
+				divisor++;	
+			}
+			SMA = sum/divisor;
+			values[j][12] = SMA;
+			divisor =0;
+			
+			sum =0;
+			start +=1;
+		}
+		
+	}
+	
+	public double getHighest() {
+		double highest = values[0][4];
+		
+		for(int i =0;i<values.length;i++) {
+			if(highest<values[i][4])
+				highest = values[i][4];
+		}
+		
+		return highest;
+	}
+	
+	public double getLowest() {
+		double lowest = values[0][4];
+		
+		for(int i=0;i<values.length;i++) {
+			if(lowest>values[i][4])
+				lowest = values[i][4];
+		}
+		return lowest;
+	}
 	public void printValues() {
 		for(int i=0; i<values.length;i++) {
 			for(int j=0; j<values[i].length;j++) {
