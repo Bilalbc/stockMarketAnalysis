@@ -25,7 +25,7 @@ public class readFile {
 				String line = file.readLine();
 
 				for (int i =0; i<10; i++){
-					System.out.println(line);
+					//System.out.println(line);
 					line = file.readLine();
 				}
 					file.close();

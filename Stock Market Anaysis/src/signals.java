@@ -1,5 +1,4 @@
-package stockMarketAnalysis;
-
+package stockAnalysisProgram;
 public class signals {
 	
 	String filePath;

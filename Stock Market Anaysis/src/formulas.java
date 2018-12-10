@@ -1,7 +1,6 @@
-package stockMarketAnalysis;import java.util.*;   
-import java.util.ArrayList;
+package stockAnalysisProgram;
+import java.util.*;   
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 
 
 public class formulas {
@@ -57,6 +56,7 @@ public class formulas {
 			for(int j=0;j<n[i].length;j++) {
 				if(j>0&&j<6){
 					values[i][j] = Float.parseFloat(n[i][j]);
+					System.out.println("#############"+i +"\n"+j);
 				}else {
 					values[i][j] = 0;
 				}
@@ -152,7 +152,7 @@ public class formulas {
 		}
 	}
 	public void createK(int period) {
-		int start=period;
+		int start = period;
 		double highestHigh = values[0][4];
 		double lowestLow = values[0][4];
 		
@@ -165,25 +165,15 @@ public class formulas {
 					if(values[start-j][4]>highestHigh)
 						highestHigh = values[start-j][4];
 					
-					if(values[start-j][4]<lowestLow)
+					else if(values[start-j][4]<lowestLow)
 						lowestLow = values[start-j][4];
-				
-			//		System.out.println(j);
-					
-			//		System.out.println(values[j][4]);
-			//		System.out.println(values[i][11]+"\n");
 				}
-			
-		//	System.out.println("####################"+lowestLow);
-	//		System.out.println("####################"+highestHigh);
-			
 			temp[i][2] = ((values[i][4]-lowestLow)/(highestHigh-lowestLow))*100;
-			
-			highestHigh = values[start][4];
-			lowestLow =values[start][4];
+			highestHigh = values[i][4];
+			lowestLow = values[i][4];
 			
 			start++;
-			}
+		}
 	}
 	
 	public void createD() {
@@ -197,7 +187,7 @@ public class formulas {
 				if(start>values.length) {
 					return;
 				}
-				sum+=values[start-i][11];//getting %k Values
+				sum+=temp[start-i][2];//getting %k Values
 				divisor++;	
 			}
 			SMA = sum/divisor;
@@ -211,18 +201,18 @@ public class formulas {
 	}
 	
 	public void createFS() {
-		//3 day SMA of %K Line
+		//5 day SMA of %K Line
 		double sum = 0;
 		int divisor = 0;
-		int start = 3;
+		int start = 5;
 		SMA =0;//simple moving average
 				
-		for(int j=3;j<values.length;j++) {
-			for(int i=0;i<3;i++) {
+		for(int j=5;j<values.length;j++) {
+			for(int i=0;i<5;i++) {
 				if(start>values.length) {
 					return;
 				}
-				sum+=temp[start-i][2];//getting MACD values
+				sum+=temp[start-i][2];//getting %K values
 				divisor++;	
 			}
 			SMA = sum/divisor;

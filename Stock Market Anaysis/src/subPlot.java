@@ -1,20 +1,14 @@
-package stockMarketAnalysis;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+package stockAnalysisProgram;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.List;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -23,9 +17,7 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickMarkPosition;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.panel.CrosshairOverlay;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
-import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
@@ -35,8 +27,6 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
@@ -74,15 +64,13 @@ public class subPlot extends ApplicationFrame {
      * choice the graph display that the user chose to view the data in
      * returns the the gr
      */
-    public JFreeChart createChart(int choice) {
-    	readFile r;
-    	
+    public JFreeChart createChart(int choice) {    	
     		switch (choice) {
     	      
     		case 1: 
     			fileLoc = "src\\Data\\Daily - 6 months.txt";
     			f = new formulas(fileLoc);
-      				period = 130;
+      				period = 140;
       				title = "Daily - 6 Months"; 
       				break;
     		case 2: 
@@ -163,13 +151,13 @@ public class subPlot extends ApplicationFrame {
        
        // chart.setBackgroundPaint(Color.BLACK);
         chart.setBorderPaint(Color.GREEN);
-        chart.clearSubtitles();
+       // chart.clearSubtitles();
         
-        TextTitle subtitle1 = new TextTitle(title);
-		chart.addSubtitle(subtitle1);
+      //  TextTitle subtitle1 = new TextTitle(title);
+	//	chart.addSubtitle(subtitle1);
 		
 		//subTitles.ad
-		chart.setSubtitles(subTitles);
+	//	chart.setSubtitles(subTitles);
         
 		createPNG();
 		System.out.println(fileLoc);
@@ -240,7 +228,7 @@ public class subPlot extends ApplicationFrame {
     private XYDataset createDataset3(Date d [], double x [][]) {
 
         // create dataset 3...
-    	f.createK(frame);
+    	f.createK(14);
     	f.createFS();
         final TimeSeries K = new TimeSeries("%k");
         final TimeSeries D = new TimeSeries("%D");
