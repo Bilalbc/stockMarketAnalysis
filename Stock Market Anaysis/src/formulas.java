@@ -15,16 +15,26 @@ public class formulas {
 	//Open	High	Low	Close*	Adj Close**	Volume
 	Date [] dateArray;
 	double [][] values;
-	float [][] SMAPeriod;
+	double [][] temp;
 	
 	
 	public formulas (String string) {
 		
 		r = new readFile(string);
-		 
 		values = new double [r.findRows()][13];
-		SMAPeriod = new float [r.findRows()][2];
+		temp = new double [r.findRows()][3];
 		dateArray = new Date[r.findRows()]; 
+		
+		initialize(string);
+	}
+	
+	
+	public void initialize(String string) {
+		readFile r = new readFile(string);
+		r.makeArray(); 
+		createValues(r.getArray());
+		createDateArray(r.getArray());
+		createBollinger(20);
 	}
 	
 	public void createDateArray(String [][] n) {
@@ -103,18 +113,18 @@ public class formulas {
 		//12 day SMA - 26 day SMA
 		
 		for(int i=12;i<values.length;i++) {
-			SMAPeriod[i][0] = (float) createSMA(12, i);
+			temp[i][0] = (float) createSMA(12, i);
 			//System.out.println(SMAPeriod[i][0]);
 		}
 		
 		for(int i=26;i<values.length;i++) {
-			SMAPeriod[i][1] = (float) createSMA(26, i);
+			temp[i][1] = (float) createSMA(26, i);
 		//	System.out.println(SMAPeriod[i][1]);
 		}
 		
 		//calculating MACD
 		for(int i=26;i<values.length;i++) {
-			values[i][9] = SMAPeriod[i][0]-SMAPeriod[i][1];
+			values[i][9] = temp[i][0]-temp[i][1];
 		}
 	}
 	
@@ -158,23 +168,22 @@ public class formulas {
 					if(values[start-j][4]<lowestLow)
 						lowestLow = values[start-j][4];
 				
-					System.out.println(j);
+			//		System.out.println(j);
 					
-					System.out.println(values[j][4]);
-					System.out.println(values[i][11]+"\n");
+			//		System.out.println(values[j][4]);
+			//		System.out.println(values[i][11]+"\n");
 				}
 			
-			System.out.println("####################"+lowestLow);
-			System.out.println("####################"+highestHigh);
+		//	System.out.println("####################"+lowestLow);
+	//		System.out.println("####################"+highestHigh);
 			
-			values[i][11] = ((values[i][4]-lowestLow)/(highestHigh-lowestLow))*100;
+			temp[i][2] = ((values[i][4]-lowestLow)/(highestHigh-lowestLow))*100;
 			
 			highestHigh = values[start][4];
 			lowestLow =values[start][4];
 			
 			start++;
 			}
-		createD();
 	}
 	
 	public void createD() {
@@ -201,6 +210,31 @@ public class formulas {
 		
 	}
 	
+	public void createFS() {
+		//3 day SMA of %K Line
+		double sum = 0;
+		int divisor = 0;
+		int start = 3;
+		SMA =0;//simple moving average
+				
+		for(int j=3;j<values.length;j++) {
+			for(int i=0;i<3;i++) {
+				if(start>values.length) {
+					return;
+				}
+				sum+=temp[start-i][2];//getting MACD values
+				divisor++;	
+			}
+			SMA = sum/divisor;
+			values[j][11] = SMA;
+			divisor =0;
+					
+			sum =0;
+			start +=1;
+		}
+		createD();
+	}
+	
 	public double getHighest() {
 		double highest = values[0][4];
 		
@@ -221,6 +255,8 @@ public class formulas {
 		}
 		return lowest;
 	}
+	
+	
 	public void printValues() {
 		for(int i=0; i<values.length;i++) {
 			for(int j=0; j<values[i].length;j++) {

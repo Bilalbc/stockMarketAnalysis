@@ -1,6 +1,10 @@
 package stockMarketAnalysis;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.List;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +14,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -18,7 +23,9 @@ import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickMarkPosition;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.panel.CrosshairOverlay;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.Crosshair;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
@@ -35,7 +42,8 @@ import org.jfree.ui.RefineryUtilities;
 
 public class subPlot extends ApplicationFrame {
 
-	private String fileLoc;
+	public String fileLoc;
+	
 	private String title;
 	private int period = 0;
 	private formulas f;
@@ -67,40 +75,25 @@ public class subPlot extends ApplicationFrame {
      * returns the the gr
      */
     public JFreeChart createChart(int choice) {
-    		readFile r;
-    		
+    	readFile r;
+    	
     		switch (choice) {
     	      
     		case 1: 
     			fileLoc = "src\\Data\\Daily - 6 months.txt";
-    			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
-    			r.makeArray(); 
-    			f.createValues(r.getArray());
-    			f.createDateArray(r.getArray());
-    			f.createBollinger(frame);
       				period = 130;
       				title = "Daily - 6 Months"; 
       				break;
     		case 2: 
     			fileLoc = "src\\Data\\Weekly - 2 years.txt";
-    			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
-    			r.makeArray(); 
-    			f.createValues(r.getArray());
-    			f.createDateArray(r.getArray());
-    			f.createBollinger(frame);
     	  			period = 106;
     	  			title = "Weekly - 2 Years";
     	  			break;
     		case 3: 
     			fileLoc = "src\\Data\\Monthly - 5 years.txt";
-    			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
-    			r.makeArray(); 
-    			f.createValues(r.getArray());
-    			f.createDateArray(r.getArray());
-    			f.createBollinger(frame);
       				period = f.values.length;
       				title = "Monthly - 5 Years";
       				break;
@@ -117,12 +110,15 @@ public class subPlot extends ApplicationFrame {
         	//rangeLower = f.getLowest()-4;
         final NumberAxis rangeAxis1 = new NumberAxis("");
         rangeAxis1.setRange(f.getLowest()-5, f.getHighest()+3);
-        rangeAxis1.setTickUnit(new NumberTickUnit(0.5));
+        rangeAxis1.setTickUnit(new NumberTickUnit(1.00));
         
         
         subplot1 = new XYPlot(data1, null, rangeAxis1, renderer1);
         	subplot1.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
-   
+        	
+        	subplot1.setDomainCrosshairVisible(true);
+        	subplot1.setRangeCrosshairVisible(true);
+        	
         // create subplot 2...
         final XYDataset data2 = createDataset2(f.getDates(), f.getValues());
         final XYItemRenderer renderer2 = new StandardXYItemRenderer();
@@ -150,9 +146,7 @@ public class subPlot extends ApplicationFrame {
 	    xAxis.setRange(f.dateArray[frame], f.dateArray[f.dateArray.length-1]);
 	    xAxis.setDateFormatOverride(new SimpleDateFormat("MMM"));
 	    xAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
-	    
-	    
-	    
+	   	    
         // parent plot...
         final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(new NumberAxis("Domain"));
         plot.setGap(10.0);
@@ -166,7 +160,7 @@ public class subPlot extends ApplicationFrame {
 
         JFreeChart chart = new JFreeChart("STOCK MARKET ANALYSIS",
                 JFreeChart.DEFAULT_TITLE_FONT, plot, true);
-        
+       
        // chart.setBackgroundPaint(Color.BLACK);
         chart.setBorderPaint(Color.GREEN);
         chart.clearSubtitles();
@@ -177,7 +171,10 @@ public class subPlot extends ApplicationFrame {
 		//subTitles.ad
 		chart.setSubtitles(subTitles);
         
-        createPNG();
+		createPNG();
+		System.out.println(fileLoc);
+		signals s = new signals(fileLoc);
+		s.makeSignal();
         
 		return chart;
     }
@@ -244,6 +241,7 @@ public class subPlot extends ApplicationFrame {
 
         // create dataset 3...
     	f.createK(frame);
+    	f.createFS();
         final TimeSeries K = new TimeSeries("%k");
         final TimeSeries D = new TimeSeries("%D");
         final TimeSeries zeroLine = new TimeSeries("");
@@ -301,6 +299,6 @@ public class subPlot extends ApplicationFrame {
 	  chart.setVisible( true );
    
 	  console.close();
-}
+    }
 
 }
