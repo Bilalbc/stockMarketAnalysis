@@ -2,21 +2,29 @@ package stockAnalysisProgram;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.List;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickMarkPosition;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -26,23 +34,33 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-import stockAnalysisProgram.formulas;
-import stockAnalysisProgram.readFile;
-
 public class subPlot extends ApplicationFrame {
 
+	private String symbol;
+	private String filename = "C:\\Users\\momo_\\Documents\\Com Sci\\Data";
 	private String fileLoc;
 	private String title;
 	private int period = 0;
 	private formulas f;
 	private int frame = 20;
+	private int rangeUpper;
+	private int rangeLower;
 	
-    public subPlot(String applicationTitle, int choice ) {
+	LinkedList subTitles = new LinkedList();
+	
+	XYPlot subplot1;
+	XYPlot subplot2;
+	XYPlot subplot3;
+	
+	private static int WIDTH = 600;
+	private static int HEIGHT = 650;
+	
+    public subPlot(String applicationTitle, int choice, String symb) {
     	
     		super(applicationTitle);
-    		JFreeChart chart = createChart(choice);
+    		JFreeChart chart = createChart(choice,symb);
     	    ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
-    	    panel.setPreferredSize(new java.awt.Dimension(600, 600));
+    	    panel.setPreferredSize(new java.awt.Dimension(WIDTH, HEIGHT));
     	    setContentPane(panel);
     		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -51,78 +69,97 @@ public class subPlot extends ApplicationFrame {
      * choice the graph display that the user chose to view the data in
      * returns the the gr
      */
-    public JFreeChart createChart(int choice) {
+    public JFreeChart createChart(int choice, String symb) {
     		readFile r;
+    	    sendingQuotes getSymbol = new sendingQuotes();
+    	    symbol = getSymbol.returnSymbol();
     		
     		switch (choice) {
     	      
     		case 1: 
-    			fileLoc = "C:\\\\Users\\\\momo_\\\\Documents\\\\Com Sci\\\\Data\\\\Daily - 6 months.txt";
+    			//fileLoc = "C:\\\\\\\\Users\\\\\\\\momo_\\\\\\\\Documents\\\\\\\\Com Sci\\\\\\\\Data\\\\\\\\GOOGL Daily.txt";
+    			fileLoc = filename+"\\"+symbol+" Daily.txt";
     			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
     			r.makeArray(); 
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
-    			f.createSMA(frame);
+    			f.createBollinger(frame);
       				period = 130;
       				title = "Daily - 6 Months"; 
       				break;
     		case 2: 
-    			fileLoc = "C:\\\\Users\\\\momo_\\\\Documents\\\\Com Sci\\\\Data\\\\Weekly - 2 years.txt";
+    		   // fileLoc = "C:\\\\\\\\Users\\\\\\\\momo_\\\\\\\\Documents\\\\\\\\Com Sci\\\\\\\\Data\\\\\\\\GOOGL Weekly.txt";
+    		   fileLoc = filename+"\\"+symbol+" Weekly.txt";
     			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
     			r.makeArray(); 
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
-    			f.createSMA(frame);
+    			f.createBollinger(frame);
     	  			period = 100;
     	  			title = "Weekly - 2 Years";
     	  			break;
     		case 3: 
-    			fileLoc = "C:\\\\Users\\\\momo_\\\\Documents\\\\Com Sci\\\\Data\\\\Monthly - 5 years.txt";
+    		    //fileLoc = "C:\\\\\\\\Users\\\\\\\\momo_\\\\\\\\Documents\\\\\\\\Com Sci\\\\\\\\Data\\\\\\\\GOOGL Monthly.txt";
+    			fileLoc = filename+"\\"+symbol+" Monthly.txt";
     			r = new readFile(fileLoc);
     			f = new formulas(fileLoc);
     			r.makeArray(); 
     			f.createValues(r.getArray());
     			f.createDateArray(r.getArray());
-    			f.createSMA(frame);
+    			f.createBollinger(frame);
       				period = f.values.length;
       				title = "Monthly - 5 Years";
       				break;
     	}
+			
         // create subplot 1...
         final XYDataset data1 = createDataset1(f.getDates(), f.getValues());
         final XYItemRenderer renderer1 = new StandardXYItemRenderer();
         	renderer1.setSeriesPaint( 0 , Color.BLACK );
-	    	renderer1.setSeriesStroke( 0 , new BasicStroke( 1f ) );
-        final NumberAxis rangeAxis1 = new NumberAxis("Range 1");
-        final XYPlot subplot1 = new XYPlot(data1, null, rangeAxis1, renderer1);
-        	subplot1.setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+        	renderer1.setSeriesPaint( 1 , Color.RED );
+        	renderer1.setSeriesPaint( 2 , Color.BLUE);
+        	renderer1.setSeriesPaint( 3 , Color.RED );
+        	
+        	//rangeLower = f.getLowest()-4;
+        final NumberAxis rangeAxis1 = new NumberAxis("");
+        rangeAxis1.setRange(f.getLowest()-5, f.getHighest()+3);
+        rangeAxis1.setTickUnit(new NumberTickUnit(0.5));
+        
+        
+        subplot1 = new XYPlot(data1, null, rangeAxis1, renderer1);
+        	subplot1.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
    
         // create subplot 2...
-        final XYDataset data2 = createDataset2();
+        final XYDataset data2 = createDataset2(f.getDates(), f.getValues());
         final XYItemRenderer renderer2 = new StandardXYItemRenderer();
-        	renderer2.setSeriesPaint(0, Color.CYAN);
-        	renderer2.setSeriesPaint(1, Color.BLACK);
-        final NumberAxis rangeAxis2 = new NumberAxis("Range 2");
-        final XYPlot subplot2 = new XYPlot(data2, null, rangeAxis2, renderer2);
-        	subplot2.setRangeAxisLocation(AxisLocation.TOP_OR_LEFT);
+        	renderer2.setSeriesPaint(0, Color.RED);
+        	renderer2.setSeriesPaint(1, Color.BLUE);
+        	renderer2.setSeriesPaint(2, Color.BLACK);
+        final NumberAxis rangeAxis2 = new NumberAxis("");
+        subplot2 = new XYPlot(data2, null, rangeAxis2, renderer2);
+        	subplot2.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
         
         //create subplot 3...
-        final XYDataset data3 = createDataset3();
+        final XYDataset data3 = createDataset3(f.getDates(), f.getValues());
         final XYItemRenderer renderer3 = new StandardXYItemRenderer();
         	renderer3.setSeriesPaint( 0 , Color.BLACK );
 	    	renderer3.setSeriesStroke( 0 , new BasicStroke( 1f ) );
-        final NumberAxis rangeAxis3 = new NumberAxis("Range 3");
-        final XYPlot subplot3 = new XYPlot(data3, null, rangeAxis3, renderer3);
-        	subplot3.setRangeAxisLocation(AxisLocation.TOP_OR_LEFT);
+        final NumberAxis rangeAxis3 = new NumberAxis("");
+        subplot3 = new XYPlot(data3, null, rangeAxis3, renderer3);
+        	subplot3.setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
+        
+
         
 	    //formating xAxis as months
-	    DateAxis xAxis = new DateAxis ("Date");
+	    DateAxis xAxis = new DateAxis ("");
 	    //from start of array(2013) to end of array(2018)
 	    xAxis.setRange(f.dateArray[frame], f.dateArray[f.dateArray.length-1]);
 	    xAxis.setDateFormatOverride(new SimpleDateFormat("MMM"));
 	    xAxis.setTickMarkPosition(DateTickMarkPosition.MIDDLE);
+	    
+	    
 	    
         // parent plot...
         final CombinedDomainXYPlot plot = new CombinedDomainXYPlot(new NumberAxis("Domain"));
@@ -135,10 +172,20 @@ public class subPlot extends ApplicationFrame {
         plot.setDomainAxis(xAxis);
         plot.setOrientation(PlotOrientation.VERTICAL);
 
-        JFreeChart chart = new JFreeChart(title,
+        JFreeChart chart = new JFreeChart("STOCK MARKET ANALYSIS",
                 JFreeChart.DEFAULT_TITLE_FONT, plot, true);
-       // ChartUtilities.applyCurrentTheme(chart);
         
+       // chart.setBackgroundPaint(Color.BLACK);
+        chart.setBorderPaint(Color.GREEN);
+        chart.clearSubtitles();
+        
+        TextTitle subtitle1 = new TextTitle(title);
+		chart.addSubtitle(subtitle1);
+		
+		//subTitles.ad
+		chart.setSubtitles(subTitles);
+        
+            
 		return chart;
     }
 
@@ -146,15 +193,15 @@ public class subPlot extends ApplicationFrame {
     	
     	  final TimeSeries trend = new TimeSeries("Data");  
 	      final TimeSeries bollingerUpper = new TimeSeries("Bollinger");
-	      final TimeSeries bollingerMiddle = new TimeSeries("Bollinger"); 
+	      final TimeSeries SMA = new TimeSeries("SMA(20)"); 
 	      final TimeSeries bollingerLower = new TimeSeries("Bollinger"); 
-	      f.createBollinger(frame);
+	      
 	     // XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
 	      for(int i=20;i<period;i++) {
 	    	
 	    		  bollingerLower.addOrUpdate(new Day(d[i]), x[i][8]);
-	    		  bollingerMiddle.addOrUpdate(new Day(d[i]), x[i][7]);   
+	    		  SMA.addOrUpdate(new Day(d[i]), x[i][7]);   
 	    		  bollingerUpper.addOrUpdate(new Day(d[i]), x[i][6]);   
 
 	      }
@@ -164,7 +211,7 @@ public class subPlot extends ApplicationFrame {
       TimeSeriesCollection dataset = new TimeSeriesCollection();          
       dataset.addSeries( trend ); 
       dataset.addSeries(bollingerLower);
-      dataset.addSeries(bollingerMiddle);  
+      dataset.addSeries(SMA);  
       dataset.addSeries(bollingerUpper);  
 	  
       //f.values.length
@@ -172,53 +219,95 @@ public class subPlot extends ApplicationFrame {
       return dataset;
     }
 
-    private XYDataset createDataset2() {
+    private XYDataset createDataset2(Date d [], double x [][]) {
 
         // create dataset 2...
-        final XYSeries series2 = new XYSeries("MACD");
+    	f.createMACD();
+    	f.createSignalLine();
+        final TimeSeries MACD = new TimeSeries("MACD");
+        final TimeSeries signalLine = new TimeSeries("Signal Line");
+        final TimeSeries zeroLine = new TimeSeries("");
+        
+        
+        for(int i=26;i<period;i++)
+        	MACD.addOrUpdate(new Day(d[i]), x[i][9]);
+        
+        for(int i=26;i<period;i++)
+        	signalLine.addOrUpdate(new Day(d[i]), x[i][10]);
+        
+        for(int i=0;i<period;i++)
+        	zeroLine.addOrUpdate(new Day(d[i]), 0);
+        
+        TimeSeriesCollection dataset = new TimeSeriesCollection(); 
+        
+        dataset.addSeries(MACD);
+        dataset.addSeries(signalLine);
+        dataset.addSeries(zeroLine);
+        
+        return dataset;
+  }
+    
+    private XYDataset createDataset3(Date d [], double x [][]) {
 
-        series2.add(10.0, 16.2);
-        series2.add(20.0, 19.3);
-        series2.add(30.0, 18.5);
-        series2.add(40.0, 15.3);
-        series2.add(50.0, 13.0);
-        series2.add(100.0, 12.3);
-        series2.add(110.0, 13.2);
-        series2.add(120.0, 11.2);
-        series2.add(130.0, 13.9);
-        series2.add(140.0, 13.2);
-        series2.add(150.0, 16.3);
-        series2.add(160.0, 17.6);
-        series2.add(170.0, 18.7);
-        series2.add(180.0, 19.9);
+        // create dataset 3...
+    	f.createK(frame);
+        final TimeSeries K = new TimeSeries("%k");
+        final TimeSeries D = new TimeSeries("%D");
+        final TimeSeries zeroLine = new TimeSeries("");
 
-        return new XYSeriesCollection(series2);
+        for(int i=20;i<period;i++)
+        	K.addOrUpdate(new Day(d[i]), x[i][11]);
+        
+        for(int i=20;i<period;i++)
+        	D.addOrUpdate(new Day(d[i]), x[i][12]);
+        	
+        for(int i=0;i<period;i++)
+        	zeroLine.addOrUpdate(new Day(d[i]), 0);
+        
+        TimeSeriesCollection dataset = new TimeSeriesCollection(); 
+        
+        dataset.addSeries(zeroLine);
+        dataset.addSeries(K);
+        dataset.addSeries(D);
+        
+        return dataset;
 
   }
     
-    private XYDataset createDataset3() {
+    public void createPNG(String title) {
+    	JFreeChart chart = new JFreeChart(title,
+                JFreeChart.DEFAULT_TITLE_FONT, subplot1, true);
+        
+        JFreeChart indicator1 = new JFreeChart(title,
+                JFreeChart.DEFAULT_TITLE_FONT, subplot2, true);
+        
+        JFreeChart indicator2 = new JFreeChart(title,
+                JFreeChart.DEFAULT_TITLE_FONT, subplot3, true);
+       // ChartUtilities.applyCurrentTheme(chart);
+        
+        try {
+			ChartUtilities.saveChartAsPNG(new File("C:\\Users\\momo_\\Documents\\Com Sci\\JPG\\"+title+".png"), chart, 500, 300);
+			ChartUtilities.saveChartAsPNG(new File("C:\\\\Users\\\\momo_\\\\Documents\\\\Com Sci\\\\JPG\\\\"+title+" - MACD.png"), indicator1, 400, 200);
+			ChartUtilities.saveChartAsPNG(new File("C:\\\\Users\\\\momo_\\\\Documents\\\\Com Sci\\\\JPG\\\\"+title+" - FS.png"), indicator2, 400, 200);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    /*public static void main(final String[] args) {
+  	  Scanner console = new Scanner(System.in);
+	     int choice = console.nextInt();
+	     
+	  subPlot chart = new subPlot(
+      "ABX" ,
+      choice);
 
-        // create dataset 3...
-        final XYSeries series2 = new XYSeries("Fast Stochastic");
-
-        series2.add(10.0, 16.2);
-        series2.add(20.0, 19.3);
-        series2.add(30.0, 13.5);
-        series2.add(40.0, 12.3);
-        series2.add(50.0, 12.0);
-        series2.add(100.0, 35.3);
-        series2.add(110.0, 18.2);
-        series2.add(120.0, 13.2);
-        series2.add(130.0, 43.9);
-        series2.add(140.0, 13.2);
-        series2.add(150.0, 15.3);
-        series2.add(160.0, 43.6);
-        series2.add(170.0, 10.7);
-        series2.add(180.0, 15.9);
-
-        return new XYSeriesCollection(series2);
-
-  }
+	  chart.pack();
+	  chart.setResizable(false);
+	  RefineryUtilities.centerFrameOnScreen( chart );
+	  chart.setVisible( true );
    
+	  console.close();
+}*/
 
 }

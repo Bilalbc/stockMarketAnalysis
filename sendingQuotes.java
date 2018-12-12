@@ -14,33 +14,66 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
 public class sendingQuotes {
 	
-	private String filepathABX1 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Daily - 6 months.txt";
-	private String filepathABX2 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Weekly - 2 years.txt";
-	private String filepathABX3 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Monthly - 5 years.txt";
+	public static String symb;
+	
+	//private String filepathABX1 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Daily - 6 months.txt";
+	//private String filepathABX2 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Weekly - 2 years.txt";
+	//private String filepathABX3 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Monthly - 5 years.txt";
+	private String filePath = "C:\\Users\\momo_\\Documents\\Com Sci\\Data";
 	
 	public void sendQuotes (String symbol) throws IOException {
 	yahooFinance readToSend = new yahooFinance();
-	String symb = symbol;
-    ArrayList<String> arrayABX1 = new ArrayList<String>(readToSend.readToHistory(symb, 1 , "Daily"));	
-	ArrayList<String> arrayABX2 = new ArrayList<String>(readToSend.readToHistory(symb, 2, "Weekly"));
-	//ArrayList<String> arrayABX3 = new ArrayList<String>(readToSend.readToHistory(symb, 5, "Monthly"));
-	   
-	  saveToFile(filepathABX1, arrayABX1);
-	  saveToFile(filepathABX2, arrayABX2);
-	  //saveToFile(filepathABX3, arrayABX3);
-      
+	symb = symbol;
+    ArrayList<String> array = new ArrayList<String>(readToSend.readToHistory(symb, 1 , "Daily"));	
+	ArrayList<String> array2 = new ArrayList<String>(readToSend.readToHistory(symb, 2, "Weekly"));
+	ArrayList<String> array3 = new ArrayList<String>(readToSend.readToHistory(symb, 20, "Monthly"));
+	  
+	  saveToFileDaily(filePath, array, symb);
+	  saveToFileWeekly(filePath, array2, symb);
+	  saveToFileMonthly(filePath, array3, symb);
+	  
 	  System.out.println("The files were successfully updated");
+	  
 	}
 	
-	public static void saveToFile(String fileName, ArrayList list) {
-		Path filePath = Paths.get(fileName);
-
+	
+	public static String returnSymbol () {
+		return symb;
+	}
+	
+	public static void saveToFileDaily(String fileName, ArrayList list, String symb) throws FileNotFoundException {
+		Formatter format;
+		Path filePath = Paths.get(fileName+"\\"+symb+" Daily.txt");
+		try {
+			Files.write(filePath, list, Charset.defaultCharset());
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	public static void saveToFileWeekly(String fileName, ArrayList list, String symb) throws FileNotFoundException {
+		Formatter format;
+		Path filePath = Paths.get(fileName+"\\"+symb+" Weekly.txt");
+		try {
+			Files.write(filePath, list, Charset.defaultCharset());
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void saveToFileMonthly(String fileName, ArrayList list, String symb) throws FileNotFoundException {
+		Formatter format;
+		Path filePath = Paths.get(fileName+"\\"+symb+" Monthly.txt");
 		try {
 			Files.write(filePath, list, Charset.defaultCharset());
 		}catch(IOException e) {
