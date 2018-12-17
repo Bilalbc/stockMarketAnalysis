@@ -1,4 +1,6 @@
-package stockMarketAnalysis;
+package stockAnalysisProgram;
+
+
 import java.util.ArrayList;
 
 import javafx.scene.layout.BackgroundImage;
@@ -40,10 +42,15 @@ import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import javafx.scene.paint.Color;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
+
 import javafx.scene.*;
 
 import org.jfree.chart.ChartPanel;
@@ -68,6 +75,11 @@ import org.jfree.ui.RefineryUtilities;
 import javafx.scene.image.*;
 
 
+import stockAnalysisProgram.formulas;
+import stockAnalysisProgram.readFile;
+
+
+
 public class launchPage extends Application{
 	Stage window;
 	Scene launch, main, emailPage, follow;
@@ -75,7 +87,7 @@ public class launchPage extends Application{
 	ListView<String> listView, followingList;
 	TextField typeFollowed;
 	
-	String close,open,vol,symbol2,high,low,date;
+	String close = "",open = "",vol = "",symbol2 = "",high = "",low= "",date = "";
 	
 	private static String fileLoc;
 	private String title;
@@ -107,12 +119,12 @@ public class launchPage extends Application{
 		grid.setVgap(8);
 		grid.setHgap(10);
 		
-		
 		//Name Label
 		Label email = new Label("Email:");
 		email.setTextFill(Color.WHITE);
 		email.setFont(new Font("Helvetica",15));
 		//Top left
+		
 		GridPane.setConstraints(email,6,14);
 		//Name input
 		//Textfield
@@ -136,15 +148,13 @@ public class launchPage extends Application{
 		//title.setTextFill(Color.web("#0076a3"));
 		title.setTextFill(Color.WHITE);
 		GridPane.setConstraints(title, 7, 4);
-		
-	//	BackgroundImage myBI= new BackgroundImage(new Image("C:\\Users\\momo_\\Pictures\\Saved Pictures\\Background image.jpg",32,32,false,true),
-		  //      BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-		       //   BackgroundSize.DEFAULT);
 
+	BackgroundImage myBI= new BackgroundImage(new Image("/cool-background-designs-26.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+		     BackgroundSize.DEFAULT);
 		
 		grid.getChildren().addAll(email, newInput, loginButton, title);
-	//	grid.setBackground(new Background(myBI));
-		grid.setStyle("-fx-background-color: black");
+		grid.setBackground(new Background(myBI));
+	//	grid.setStyle("-fx-background-color: black");
 		Scene launch = new Scene(grid,420,300);
      	//launch.setFill(Color.BLACK);
 		window.setScene(launch);
@@ -161,65 +171,65 @@ public class launchPage extends Application{
 		layout2.setConstraints(symbol,90,20);
 		
 		Button searchSymbol = new Button("Search");
-		layout2.setConstraints(searchSymbol,30,30);
+		layout2.setConstraints(searchSymbol,100,20);
 	
 		
 		Label title2 = new Label("SmartInvest");
-		title2.setFont(new Font("Arial", 40));
-		title2.setTextFill(Color.web("#0076a3"));
+		title2.setFont(new Font("Copperplate Gothic Light", 40));
+		title2.setTextFill(Color.WHITE);
 		layout2.setConstraints(title2, 2,4);
 		
 
 		Label openingPrice = new Label("Opening Price: " + open);
 		openingPrice.setFont(new Font("Arial", 20));
-		openingPrice.setTextFill(Color.web("#0076a3"));
+		openingPrice.setTextFill(Color.WHITE);
 		layout2.setConstraints(openingPrice, 2,25);
 		
 		Label highestPrice = new Label("Highest Price: " + high);
 		highestPrice.setFont(new Font("Arial", 20));
-		highestPrice.setTextFill(Color.web("#0076a3"));
+		highestPrice.setTextFill(Color.WHITE);
 		layout2.setConstraints(highestPrice, 2,30);
 		
 		Label lowestPrice = new Label("Lowest Price: " + low);
 		lowestPrice.setFont(new Font("Arial", 20));
-		lowestPrice.setTextFill(Color.web("#0076a3"));
+		lowestPrice.setTextFill(Color.WHITE);
 		layout2.setConstraints(lowestPrice, 2,35);
 		
 		Label closePrice = new Label("Close Price: " + close);
 		closePrice.setFont(new Font("Arial", 20));
-		closePrice.setTextFill(Color.web("#0076a3"));
+		closePrice.setTextFill(Color.WHITE);
 		layout2.setConstraints(closePrice, 40,25);
 		
 		Label volume = new Label("Volume(Number of trades): " + vol);
 		volume.setFont(new Font("Arial", 20));
-		volume.setTextFill(Color.web("#0076a3"));
+		volume.setTextFill(Color.WHITE);
 		layout2.setConstraints(volume, 40,30);
 
 		Label change = new Label("Change(In price):");
 		change.setFont(new Font("Arial", 20));
-		change.setTextFill(Color.web("#0076a3"));
+		change.setTextFill(Color.WHITE);
 		layout2.setConstraints(change, 40,35);
 		
 		Label time = new Label("Date: " + date);
 		time.setFont(new Font("Arial", 20));
-		time.setTextFill(Color.web("#0076a3"));
+		time.setTextFill(Color.WHITE);
 		layout2.setConstraints(time, 2,10);
 		
 		Label stock = new Label("Symbol " + symbol2);
 		stock.setFont(new Font("Arial", 20));
-		stock.setTextFill(Color.web("#0076a3"));
+		stock.setTextFill(Color.WHITE);
 		layout2.setConstraints(stock, 2,20);
 		
 		Label graphDisplay = new Label("Graph Display:");
 		graphDisplay.setFont(new Font("Arial", 20));
-		graphDisplay.setTextFill(Color.web("#0076a3"));
+		graphDisplay.setTextFill(Color.WHITE);
 		layout2.setConstraints(graphDisplay, 2, 40);
 		
 		ChoiceBox <String> freq = new ChoiceBox<>();
 		freq.getItems().addAll("Daily", "Weekly", "Monthly");
 		freq.setValue("Daily");
 		//stocksMenu.setStyle("-fx-background-color: blue");
-		layout2.setConstraints(freq, 40, 51);
+		layout2.setConstraints(freq, 2, 85);
 		
 		searchSymbol.setOnAction(e -> {
 			yahooFinance search = new yahooFinance();
@@ -276,7 +286,7 @@ public class launchPage extends Application{
 		save.createPNG(symbol2);
 			
 		});
-		layout2.setConstraints(set, 30, 50);	
+		layout2.setConstraints(set, 2, 75);	
 		
 		Button addEmail = new Button("Add emails");
 		layout2.setConstraints(addEmail,2,55);
@@ -285,12 +295,13 @@ public class launchPage extends Application{
 		});
 		
 		Button setFollow = new Button("Following");
-		layout2.setConstraints(setFollow,25,55);
+		layout2.setConstraints(setFollow,2,65);
 		setFollow.setOnAction(e -> {
 			window.setScene(follow);
 		});
 		
-		
+		BackgroundImage BI2= new BackgroundImage(new Image("/lll.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+			     BackgroundSize.DEFAULT);
 		  
 		 //Open, high, low, close, volume
 
@@ -298,7 +309,9 @@ public class launchPage extends Application{
 		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, change, closePrice, graphDisplay
 				,freq, set, addEmail, symbol, searchSymbol, stock, setFollow);
 		layout2.setStyle("-fx-background-color: black");
-		main = new Scene(layout2,1200,1200);
+		//layout2.setBackground(new Background(BI2));
+		//layout2.setBackground(new Background(myBI));
+		main = new Scene(layout2,900,900);
 		
 		window.setOnCloseRequest(e -> {
 			e.consume();
@@ -340,20 +353,21 @@ public class launchPage extends Application{
 			
 			add.setOnAction(e -> {
 				listView.getItems().addAll(emailAddition.getText());
-				emails.add(emailAddition.getText());
 				
 			});
 			
 			Button send = new Button("Send Now");
 			layout3.setConstraints(send,0,4);
 			send.setOnAction(e->{
+				emails.addAll(listView.getSelectionModel().getSelectedItems());
 				sendEmails sendEmail = new sendEmails();
 				sendEmail.emailCode(emails, date, symbol2, close, open, high, low, vol);
-				buttonClicked();
 			});
 		 
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
+			layout3.setBackground(new Background(BI2));
 			GridPane.setConstraints(loginButton, 6, 15);
+			
 			
 			
 			//FOLLOW SCENE
@@ -371,9 +385,10 @@ public class launchPage extends Application{
 			
 			 });
 			
+			 
 			 Button followButton = new Button("follow");
-			 layout4.setConstraints(followButton, 0 , 100);
-			 followButton.setOnAction(e -> {
+			 layout4.setConstraints(followButton, 0 , 100);	
+			 	followButton.setOnAction(e -> {
 				followingStocks.add(typeFollowed.getText());
 				followingList.getItems().addAll(typeFollowed.getText());
 			 });
@@ -382,14 +397,22 @@ public class launchPage extends Application{
 			 followingList.getItems();
 		   	 followingList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		   	 layout4.setConstraints(backButton,0,1);
+		   	 
+		   	Button removeFollow = new Button ("Remove");
+			layout4.setConstraints(removeFollow,20,20);
+			removeFollow.setOnAction(e -> {
+				followingStocks.remove(followingList.getSelectionModel().getSelectedItems());
+				String selectedIndex;
+				selectedIndex = followingList.getSelectionModel().getSelectedItem();
+				followingList.getItems().remove(selectedIndex);
+			});
 
 		   	typeFollowed = new TextField("[Enter stocks symbols here you want to follow]");
 		   	layout4.setConstraints(typeFollowed, 100, 0);
 		   	 
-		   	 
-		   	 
-			layout4.getChildren().addAll(backButton2, followingList, typeFollowed, followButton);
-			layout4.setStyle("-fx-background-color: black");
+			layout4.getChildren().addAll(backButton2, followingList, typeFollowed, followButton, removeFollow);
+			//layout4.setStyle("-fx-background-color: black");
+			layout4.setBackground(new Background(BI2));
 			follow = new Scene(layout4,450,450);
 			
 			
@@ -403,26 +426,13 @@ public class launchPage extends Application{
 
 	private void closeProgram() {
 		Boolean anwser = closeProgram.display("", "Sure you want to exit?");
-		if (anwser) {
+		if (anwser)
 			window.close();
-			createFiles c = new createFiles();
-				c.createTxtFile(followingStocks);
-				System.out.println(followingStocks.get(0));
-		}
+		createFiles c = new createFiles();
+		c.createTxtFile(followingStocks);
+		System.out.println(followingStocks.get(0));
 	}
 	
-	
-	private void buttonClicked() {
-		String message = "";
-		ObservableList<String> emails;
-		emails = listView.getSelectionModel().getSelectedItems();
-		
-		for (String e:emails) {
-			message += e + "\n";
-		}
-	
-		
-	}
 	
 	private XYDataset createDataset(Date d [], double f [][]) {
         final TimeSeries trend = new TimeSeries("Data");
@@ -446,7 +456,21 @@ public class launchPage extends Application{
 		    chart.setVisible(true);
 	 }
 	 
+	 private BufferedImage loadBufferedImage(String string)
+		{
+		    try
+		    {
+		        BufferedImage bi = ImageIO.read(this.getClass().getResource(string));
+		        return bi;
+		    } catch (IOException e)
+		    {
+		        e.printStackTrace();
+		    }
+		    return null;
+		}
+	 
 	 
 	 
 	 
 }
+
