@@ -1,4 +1,5 @@
-package stockAnalysisProgram;
+package stockMarketAnalysis;
+
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -12,9 +13,11 @@ import javax.mail.internet.MimeMessage;
 
 public class sendEmails {
 
+	public static void main(String[]args) {
+		emailCode(null, null, "SLV", null, null,null,null,null);
+	}
 	
 	 public static void emailCode (ArrayList<String>emails, String date, String symbol, String close,String open,String high,String low, String vol) {
-
 		  
 		  String [] emailArray = emails.toArray(new String[emails.size()]);
 		  String myEmail = "smartinvestofficial@gmail.com";
@@ -47,6 +50,7 @@ public class sendEmails {
 		   Transport trans = ss.getTransport("smtp");
 		   Transport.send(msg);
 		   System.out.println("message sent");
+		   
 		  } catch (Exception e) {
 		   System.out.println(e.getMessage());
 		  

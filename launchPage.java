@@ -1,6 +1,4 @@
-package stockAnalysisProgram;
-
-
+package stockMarketAnalysis;
 import java.util.ArrayList;
 
 import javafx.scene.layout.BackgroundImage;
@@ -68,11 +66,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import javafx.scene.image.*;
-
-
-import stockAnalysisProgram.formulas;
-import stockAnalysisProgram.readFile;
-
 
 
 public class launchPage extends Application{
@@ -410,8 +403,12 @@ public class launchPage extends Application{
 
 	private void closeProgram() {
 		Boolean anwser = closeProgram.display("", "Sure you want to exit?");
-		if (anwser)
+		if (anwser) {
 			window.close();
+			createFiles c = new createFiles();
+				c.createTxtFile(followingStocks);
+				System.out.println(followingStocks.get(0));
+		}
 	}
 	
 	
@@ -453,4 +450,3 @@ public class launchPage extends Application{
 	 
 	 
 }
-
