@@ -1,19 +1,23 @@
-package stockAnalysisProgram;
+package stockMarketAnalysis;
 
-import java.io.IOException;
-import java.util.Scanner;
-
-import org.jfree.ui.RefineryUtilities;
-
-import javafx.application.Application;
 public class stockMarketAnalysis {
- 	public static void main(String[]args) throws IOException {
-///////
- 		Application.launch(launchPage.class, args);
- 		//analyzeStock history = new analyzeStock();
- 		//history.historyStock();
-		
- 		 }
- 		
 
- 	}
+	
+	public static void main(String[]args) {
+		
+		String fileLoc =  "src//Data//daily - 6 months.txt";
+		readFile r = new readFile(fileLoc);
+		formulas f = new formulas(fileLoc);
+		
+		signals s = new signals("");
+		
+		if(s.makeSignal(fileLoc) == 1) {
+			System.out.println("BUY");
+		}
+		else
+			System.out.println("SELL");
+		
+		launchPage l = new launchPage();
+		
+	}
+}

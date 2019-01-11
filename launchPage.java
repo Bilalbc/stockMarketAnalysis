@@ -1,5 +1,4 @@
-package stockAnalysisProgram;
-
+package stockMarketAnalysis;
 
 import java.util.ArrayList;
 
@@ -8,6 +7,8 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundSize;
 import java.util.Date;
+import java.util.HashSet;
+
 import org.jfree.ui.RefineryUtilities;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
@@ -43,8 +44,15 @@ import yahoofinance.histquotes.HistoricalQuote;
 import javafx.scene.paint.Color;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -74,12 +82,6 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import javafx.scene.image.*;
 
-
-import stockAnalysisProgram.formulas;
-import stockAnalysisProgram.readFile;
-
-
-
 public class launchPage extends Application{
 	Stage window;
 	Scene launch, main, emailPage, follow;
@@ -93,20 +95,19 @@ public class launchPage extends Application{
 	private String title;
  	private int period = 0;
  	private formulas f;
+ 	private signals s;
  	private int frame = 20;
 	readFile r;
 
-
 	public ArrayList <String> emails = new ArrayList();
 	public ArrayList <String> followingStocks = new ArrayList();
+	public String [] signals;
+	HashSet<String> hs;
 
-	
-	public void start(Stage primaryStage) throws Exception {
+	@SuppressWarnings("restriction")
+public void start(Stage primaryStage) throws Exception {
 		
 		yahooFinance stats = new yahooFinance();
-		//String date = stats.getDate("ABX").toString();
-		//String close = stats.getClosePrice("ABX").toString();
-
 		window = primaryStage;
 		window.setTitle("SmartInvest");
 		window.setResizable(false);
@@ -149,12 +150,12 @@ public class launchPage extends Application{
 		title.setTextFill(Color.WHITE);
 		GridPane.setConstraints(title, 7, 4);
 
-	BackgroundImage myBI= new BackgroundImage(new Image("/cool-background-designs-26.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-		     BackgroundSize.DEFAULT);
+	//BackgroundImage myBI= new BackgroundImage(new Image("/cool-background-designs-26.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+		//     BackgroundSize.DEFAULT);
 		
 		grid.getChildren().addAll(email, newInput, loginButton, title);
-		grid.setBackground(new Background(myBI));
-	//	grid.setStyle("-fx-background-color: black");
+	//	grid.setBackground(new Background(myBI));
+		grid.setStyle("-fx-background-color: black");
 		Scene launch = new Scene(grid,420,300);
      	//launch.setFill(Color.BLACK);
 		window.setScene(launch);
@@ -255,10 +256,6 @@ public class launchPage extends Application{
 				sendingQuotes send = new sendingQuotes();
 		 		send.sendQuotes(symb);
 		 		subPlot sendSymbol = new subPlot(symb, frame, symbol2);
-		 		
-		 		
-	
-		 		
 				
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -298,14 +295,15 @@ public class launchPage extends Application{
 		layout2.setConstraints(setFollow,2,65);
 		setFollow.setOnAction(e -> {
 			window.setScene(follow);
+		 	followingList.getItems().addAll(followingStocks);
+			makePers();
 		});
 		
-		BackgroundImage BI2= new BackgroundImage(new Image("/lll.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-			     BackgroundSize.DEFAULT);
+		//BackgroundImage BI2= new BackgroundImage(new Image("/lll.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+			//     BackgroundSize.DEFAULT);
 		  
 		 //Open, high, low, close, volume
 
-		
 		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, change, closePrice, graphDisplay
 				,freq, set, addEmail, symbol, searchSymbol, stock, setFollow);
 		layout2.setStyle("-fx-background-color: black");
@@ -317,17 +315,14 @@ public class launchPage extends Application{
 			e.consume();
 			closeProgram();
 		});
-	    	
 		
 		//Add Email GUI
-		
 		
 		GridPane layout3 = new GridPane();
 		layout3.setPadding(new Insets(10,10,10,10));
 		//The spacing vertically is 8 and horizonatlly is 10.
 		layout3.setVgap(8);
 		layout3.setHgap(10);
-		
 		
 		layout3.setStyle("-fx-background-color: black");
 		
@@ -365,13 +360,12 @@ public class launchPage extends Application{
 			});
 		 
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
-			layout3.setBackground(new Background(BI2));
+		//	layout3.setBackglayout4.setStyle("-fx-background-color: black");
+			layout3.setStyle("-fx-background-color: black");
+
 			GridPane.setConstraints(loginButton, 6, 15);
 			
-			
-			
 			//FOLLOW SCENE
-			
 			
 			GridPane layout4 = new GridPane();
 			layout4.setPadding(new Insets(10,10,10,10));
@@ -382,20 +376,23 @@ public class launchPage extends Application{
 			 layout4.setConstraints(backButton2, 100, 100);
 			 backButton2.setOnAction(e -> {
 				 window.setScene(main);
-			
 			 });
-			
+			 
 			 
 			 Button followButton = new Button("follow");
 			 layout4.setConstraints(followButton, 0 , 100);	
 			 	followButton.setOnAction(e -> {
-				followingStocks.add(typeFollowed.getText());
-				followingList.getItems().addAll(typeFollowed.getText());
+			 		if(typeFollowed.getText().length()/3<5){
+			 			makePers();
+			 		}
+			 		else
+			 			System.out.println("no");
 			 });
 			 
 			 followingList = new ListView<>();
 			 followingList.getItems();
 		   	 followingList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		   
 		   	 layout4.setConstraints(backButton,0,1);
 		   	 
 		   	Button removeFollow = new Button ("Remove");
@@ -403,50 +400,106 @@ public class launchPage extends Application{
 			removeFollow.setOnAction(e -> {
 				followingStocks.remove(followingList.getSelectionModel().getSelectedItems());
 				String selectedIndex;
+				String text ="";
 				selectedIndex = followingList.getSelectionModel().getSelectedItem();
 				followingList.getItems().remove(selectedIndex);
+				deleteTxt(selectedIndex, "src//Data//persFile.txt");
 			});
 
 		   	typeFollowed = new TextField("[Enter stocks symbols here you want to follow]");
 		   	layout4.setConstraints(typeFollowed, 100, 0);
 		   	 
 			layout4.getChildren().addAll(backButton2, followingList, typeFollowed, followButton, removeFollow);
-			//layout4.setStyle("-fx-background-color: black");
-			layout4.setBackground(new Background(BI2));
+			layout4.setStyle("-fx-background-color: black");
+			//layout4.setBackground(new Background(BI2));
 			follow = new Scene(layout4,450,450);
-			
-			
-			
-	
 			
 			window.show();
 	
 	}
 	
+	private void makePers() {
+	 	followingList.getItems().clear();
+		followingStocks.clear();
+		
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("src//Data//persFile.txt", true));
+			BufferedReader reader = new BufferedReader(new FileReader("src//Data//persFile.txt"));
+			
 
+			ArrayList<String>temp = new ArrayList<String>();
+			writer.append(typeFollowed.getText()+"\n");
+			String line = reader.readLine(); 
+	          
+	        // set store unique values 
+	        hs = new HashSet<String>(); 
+	          
+	        // loop for each line of input.txt 
+	        while(line != null) 
+	        { 
+	        	
+	        	temp.add(line);
+	            // write only if not 
+	            // present in hashset 
+	        	for(int i=temp.size()-1;i<=(temp.size()-typeFollowed.getText().length()/3);i++) {
+	        		System.out.println(i);
+		            if(hs.add(temp.get(i))) 
+		                followingStocks.add(line); 
+	        }
+	            line = reader.readLine(); 
+	            
+	        } 
+	        writer.flush(); 
+	          
+	        // closing resources 
+	        reader.close(); 
+	        writer.close(); 
+
+		 	followingList.getItems().addAll(followingStocks);
+		 	
+		} catch (IOException e1) {}
+
+	}
+	
+	private void deleteTxt(String selectedIndex, String file) {
+		
+		int x =0;
+		ArrayList<String>temp = new ArrayList<String>();
+
+		HashSet<String> hash = new HashSet<String>(); 
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+			
+			for (String line; (line = reader.readLine()) != null; x++) {
+				System.out.println("asdfasdfadsf");
+				 if (!line.equals(selectedIndex)) {
+					temp.add(line);
+					if(!hash.add(temp.get(x-1)))
+						temp.remove(x);
+				 }
+			}
+			for(int i=0;i<temp.size();i++) {
+				System.out.println(temp.get(i)+"asd");
+				writer.append(temp.get(i));
+				writer.newLine();
+			}
+			
+			temp.clear();
+			writer.close();
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	private void closeProgram() {
 		Boolean anwser = closeProgram.display("", "Sure you want to exit?");
 		if (anwser)
 			window.close();
-		createFiles c = new createFiles();
-		c.createTxtFile(followingStocks);
-		System.out.println(followingStocks.get(0));
-	}
-	
-	
-	private XYDataset createDataset(Date d [], double f [][]) {
-        final TimeSeries trend = new TimeSeries("Data");
-
-    for(int i=0;i<100;i++)
-        trend.add(new Day(d[i]), f[i][3] );
-
-    TimeSeriesCollection dataset = new TimeSeriesCollection();
-    dataset.addSeries( trend ); 
-
-    //f.values.length
-
-    return dataset;
-    	
+		createFile();
+		
 	}
 	 
 	 public void drawGraph (int change, String symb) {
@@ -454,6 +507,27 @@ public class launchPage extends Application{
 			chart.pack();
 		    RefineryUtilities.centerFrameOnScreen(chart);
 		    chart.setVisible(true);
+	 }
+	 
+	 public void createFile() {
+		 signals = new String[3];
+		 String [] type = new String[3];
+		 type[0]= "Monthly - 5 years.txt";
+		 type[1]= "Weekly - 2 years.txt";
+		 type[2]= "Daily - 1 year.txt";
+		 
+		 createFiles c = new createFiles(followingStocks);
+		 
+		 
+		 for(int i=0;i<followingStocks.size();i++) {
+			 for(int j=0;j<3;j++) {
+				 f = new formulas("src//Data//"+followingStocks.get(i)+" "+ type[j]);
+				 signals s = new signals(f.values);
+				 signals[j] = s.makeSignal();
+			 }
+			 c.createTxtFile(signals, f.values);
+			 c.createImageFile();
+		 }
 	 }
 	 
 	 private BufferedImage loadBufferedImage(String string)
@@ -468,9 +542,4 @@ public class launchPage extends Application{
 		    }
 		    return null;
 		}
-	 
-	 
-	 
-	 
 }
-

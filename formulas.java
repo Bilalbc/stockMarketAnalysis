@@ -1,9 +1,11 @@
-package stockAnalysisProgram;
-
+package stockMarketAnalysis;
+import java.util.*;   
 import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
+
+import java.util.*;   
+import java.text.SimpleDateFormat;
 
 
 public class formulas {
@@ -17,16 +19,35 @@ public class formulas {
 	//Open	High	Low	Close*	Adj Close**	Volume
 	Date [] dateArray;
 	double [][] values;
-	float [][] SMAPeriod;
+	double [][] temp;
 	
 	
 	public formulas (String string) {
 		
 		r = new readFile(string);
-		 
 		values = new double [r.findRows()][13];
-		SMAPeriod = new float [r.findRows()][2];
+		temp = new double [r.findRows()][3];
 		dateArray = new Date[r.findRows()]; 
+		System.out.println(values.length);
+		
+		initialize(string);
+	}
+	
+	public double[][] initialize(String string) {
+		readFile r = new readFile(string);
+		r.makeArray(); 
+		createValues(r.getArray());
+		createDateArray(r.getArray());
+		createBollinger();
+		createMACD();
+		createSignalLine();
+		createK();
+		createD();
+		createFS();
+		System.out.println(values[0][1]+"()");
+		
+		return values;
+		
 	}
 	
 	public void createDateArray(String [][] n) {
@@ -72,22 +93,22 @@ public class formulas {
 
 			return SMA;
 	}
-	public void createBollinger(int period) {
-		int start = period;
+	public void createBollinger() {
+		int start = 20;
 		double upper;//upper bollinger line
 		double lower;//lower bollinger line
 		SD = 0; //standard deviation
 
 		//getting SMA
-		for(int j=period;j<values.length;j++) {
-			values[j][7]=createSMA(period,j);
+		for(int j=20;j<values.length;j++) {
+			values[j][7]=createSMA(20,j);
 		}
-		for(int j=period;j<values.length;j++) {
+		for(int j=20;j<values.length;j++) {
 			//calculating standard deviation
-			for(int i=0;i<period;i++) 
+			for(int i=0;i<20;i++) 
 				SD +=Math.pow(values[start-i][4]-values[start][7], 2);
 			
-			SD = Math.sqrt(SD/period);
+			SD = Math.sqrt(SD/20);
 				
 			upper = values[j][7] + (2*SD);
 			lower = values[j][7] - (2*SD);
@@ -105,18 +126,18 @@ public class formulas {
 		//12 day SMA - 26 day SMA
 		
 		for(int i=12;i<values.length;i++) {
-			SMAPeriod[i][0] = (float) createSMA(12, i);
+			temp[i][0] = (float) createSMA(12, i);
 			//System.out.println(SMAPeriod[i][0]);
 		}
 		
 		for(int i=26;i<values.length;i++) {
-			SMAPeriod[i][1] = (float) createSMA(26, i);
+			temp[i][1] = (float) createSMA(26, i);
 		//	System.out.println(SMAPeriod[i][1]);
 		}
 		
 		//calculating MACD
 		for(int i=26;i<values.length;i++) {
-			values[i][9] = SMAPeriod[i][0]-SMAPeriod[i][1];
+			values[i][9] = temp[i][0]-temp[i][1];
 		}
 	}
 	
@@ -143,13 +164,13 @@ public class formulas {
 			start +=1;
 		}
 	}
-	public void createK(int period) {
-		int start=period;
+	public void createK() {
+		int start = 14;
 		double highestHigh = values[0][4];
 		double lowestLow = values[0][4];
 		
-		for(int i=period;i<values.length;i++) {
-			for(int j=0;j<period;j++) {
+		for(int i=14;i<values.length;i++) {
+			for(int j=0;j<14;j++) {
 
 				if(start>values.length) 
 					return;
@@ -157,26 +178,15 @@ public class formulas {
 					if(values[start-j][4]>highestHigh)
 						highestHigh = values[start-j][4];
 					
-					if(values[start-j][4]<lowestLow)
+					else if(values[start-j][4]<lowestLow)
 						lowestLow = values[start-j][4];
-				
-					System.out.println(j);
-					
-					System.out.println(values[j][4]);
-					System.out.println(values[i][11]+"\n");
 				}
-			
-			System.out.println("####################"+lowestLow);
-			System.out.println("####################"+highestHigh);
-			
-			values[i][11] = ((values[i][4]-lowestLow)/(highestHigh-lowestLow))*100;
-			
-			highestHigh = values[start][4];
-			lowestLow =values[start][4];
+			temp[i][2] = ((values[i][4]-lowestLow)/(highestHigh-lowestLow))*100;
+			highestHigh = values[i][4];
+			lowestLow = values[i][4];
 			
 			start++;
-			}
-		createD();
+		}
 	}
 	
 	public void createD() {
@@ -190,7 +200,7 @@ public class formulas {
 				if(start>values.length) {
 					return;
 				}
-				sum+=values[start-i][11];//getting %k Values
+				sum+=temp[start-i][2];//getting %k Values
 				divisor++;	
 			}
 			SMA = sum/divisor;
@@ -201,6 +211,31 @@ public class formulas {
 			start +=1;
 		}
 		
+	}
+	
+	public void createFS() {
+		//5 day SMA of %K Line
+		double sum = 0;
+		int divisor = 0;
+		int start = 5;
+		SMA =0;//simple moving average
+				
+		for(int j=5;j<values.length;j++) {
+			for(int i=0;i<5;i++) {
+				if(start>values.length) {
+					return;
+				}
+				sum+=temp[start-i][2];//getting %K values
+				divisor++;	
+			}
+			SMA = sum/divisor;
+			values[j][11] = SMA;
+			divisor =0;
+					
+			sum =0;
+			start +=1;
+		}
+		createD();
 	}
 	
 	public double getHighest() {
@@ -223,6 +258,7 @@ public class formulas {
 		}
 		return lowest;
 	}
+	
 	public void printValues() {
 		for(int i=0; i<values.length;i++) {
 			for(int j=0; j<values[i].length;j++) {

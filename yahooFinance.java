@@ -1,4 +1,5 @@
-package stockAnalysisProgram;
+package stockMarketAnalysis;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -162,6 +163,3 @@ public class yahooFinance {
 
 	
 }
-	
-	
-
