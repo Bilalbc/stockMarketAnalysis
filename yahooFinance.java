@@ -1,7 +1,7 @@
-package stockMarketAnalysis;
-
+package stockAnalysisProgram;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,7 +41,7 @@ public class yahooFinance {
 			for (HistoricalQuote quote : history) {
 				close = quote.getClose();
 			}
-			return close;
+			return close.setScale(2, RoundingMode.CEILING);
 
 		}
 	 
@@ -52,7 +52,7 @@ public class yahooFinance {
 			for (HistoricalQuote quote : history) {
 				open = quote.getOpen();
 			}
-			return open;
+			return open.setScale(2, RoundingMode.CEILING);
 
 		}
 	 
@@ -63,7 +63,7 @@ public class yahooFinance {
 			for (HistoricalQuote quote : history) {
 				high = quote.getHigh();
 			}
-			return high;
+			return high.setScale(2, RoundingMode.CEILING);
 
 		}
 	 
@@ -74,7 +74,7 @@ public class yahooFinance {
 			for (HistoricalQuote quote : history) {
 				low = quote.getLow();
 			}
-			return low;
+			return low.setScale(2, RoundingMode.CEILING);
 
 		}
 	 
@@ -163,3 +163,6 @@ public class yahooFinance {
 
 	
 }
+	
+	
+
