@@ -1,6 +1,10 @@
 package stockMarketAnalysis;
 import java.util.*;   
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
@@ -15,6 +19,7 @@ public class formulas {
 	
 	public String path ="";
 	readFile r;
+	int lines;
 	//Date	
 	//Open	High	Low	Close*	Adj Close**	Volume
 	Date [] dateArray;
@@ -29,6 +34,8 @@ public class formulas {
 		temp = new double [r.findRows()][3];
 		dateArray = new Date[r.findRows()]; 
 		System.out.println(values.length);
+		
+		this.path = string;
 		
 		initialize(string);
 	}
@@ -236,6 +243,20 @@ public class formulas {
 			start +=1;
 		}
 		createD();
+	}
+	
+	public int fileSize() {
+		lines = 0;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(path));
+			
+			while (reader.readLine() != null) lines++;
+			reader.close();
+			
+			
+		} catch (FileNotFoundException e) {} catch (IOException e) {}
+
+		return lines;
 	}
 	
 	public double getHighest() {

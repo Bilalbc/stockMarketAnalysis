@@ -61,28 +61,28 @@ public class subPlot extends ApplicationFrame {
      * returns the the gr
      */
     public JFreeChart createChart(int choice, String symbol) {    	
+    	System.out.println(symbol);
     		switch (choice) {
     	      
     		case 1: 
     			fileLoc = fileName+"\\"+symbol+" Daily - 1 Year.txt";
     			f = new formulas(fileLoc);
-      				period = 250;
+    			period = f.fileSize();
       				title = "Daily"; 
       				break;
     		case 2: 
     			fileLoc = fileName+"\\"+symbol+" Weekly - 2 Years.txt";
     			f = new formulas(fileLoc);
-    	  			period = 101;
+    			period = f.fileSize();
     	  			title = "Weekly";
     	  			break;
     		case 3: 
     			fileLoc = fileName+"\\"+symbol+" Monthly - 5 Years.txt";
     			f = new formulas(fileLoc);
-      				period = f.values.length;
+    			period = f.fileSize();
       				title = "Monthly";
       				break;
     	}
-			
         // create subplot 1...
         final XYDataset data1 = createDataset1(f.getDates(), f.getValues());
         final XYItemRenderer renderer1 = new StandardXYItemRenderer();
@@ -142,7 +142,7 @@ public class subPlot extends ApplicationFrame {
         plot.setDomainAxis(xAxis);
         plot.setOrientation(PlotOrientation.VERTICAL);
 
-        JFreeChart chart = new JFreeChart("STOCK MARKET ANALYSIS",
+        JFreeChart chart = new JFreeChart("",
                 JFreeChart.DEFAULT_TITLE_FONT, plot, true);
        
         chart.setBorderPaint(Color.GREEN);
@@ -163,14 +163,14 @@ public class subPlot extends ApplicationFrame {
 	      
 	     // XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
 
-	      for(int i=20;i<period;i++) {
+	      for(int i=20;i<period-1;i++) {
 	    		  bollingerLower.addOrUpdate(new Day(d[i]), x[i][8]);
 	    		  SMA.addOrUpdate(new Day(d[i]), x[i][7]);   
 	    		  bollingerUpper.addOrUpdate(new Day(d[i]), x[i][6]);   
 
 	      }
-      for(int i=20;i<period;i++)
-    	  trend.add(new Day(d[i]), x[i][4] );
+      for(int i=20;i<period-1;i++)
+    	  trend.addOrUpdate(new Day(d[i]), x[i][4] );
       
       TimeSeriesCollection dataset = new TimeSeriesCollection();          
       dataset.addSeries( trend ); 

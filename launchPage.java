@@ -1,4 +1,4 @@
-package stockAnalysisProgram;
+package stockMarketAnalysis;
 
 import java.util.ArrayList;
 
@@ -26,6 +26,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
@@ -93,6 +94,7 @@ public class launchPage extends Application{
 	
 	private static String fileLoc;
 	private String title;
+	private String title2;
  	private int period = 0;
  	private formulas f;
  	private signals s;
@@ -126,6 +128,7 @@ public void start(Stage primaryStage) throws Exception {
 		email.setFont(new Font("Helvetica",15));
 		//Top left
 		
+
 		GridPane.setConstraints(email,6,14);
 		//Name input
 		//Textfield
@@ -145,16 +148,17 @@ public void start(Stage primaryStage) throws Exception {
 		
 		//Label Title
 		Label title = new Label("SmartInvest");
+		
 		title.setFont(Font.font("Copperplate Gothic Light", 27));
 		//title.setTextFill(Color.web("#0076a3"));
 		title.setTextFill(Color.WHITE);
 		GridPane.setConstraints(title, 7, 4);
 
-	BackgroundImage myBI= new BackgroundImage(new Image("/cool-background-designs-26.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-		    BackgroundSize.DEFAULT);
+	BackgroundImage myBI= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/launchImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+		     BackgroundSize.DEFAULT);
 		
 		grid.getChildren().addAll(email, newInput, loginButton, title);
-	    grid.setBackground(new Background(myBI));
+		grid.setBackground(new Background(myBI));
 		//grid.setStyle("-fx-background-color: black");
 		Scene launch = new Scene(grid,420,300);
      	//launch.setFill(Color.BLACK);
@@ -168,77 +172,74 @@ public void start(Stage primaryStage) throws Exception {
 		layout2.setVgap(1);
 		layout2.setHgap(1);
 		
-		GridPane graphLayout = new GridPane();
-		
 		TextField symbol = new TextField("ex.GLD");
-		layout2.setConstraints(symbol,40,20);
+		layout2.setConstraints(symbol,90,20);
 		
 		Button searchSymbol = new Button("Search");
-		layout2.setConstraints(searchSymbol,45,20);
+		layout2.setConstraints(searchSymbol,100,20);
 	
 		
 		Label title2 = new Label("SmartInvest");
 		title2.setFont(new Font("Copperplate Gothic Light", 40));
 		title2.setTextFill(Color.WHITE);
-		layout2.setConstraints(title2, 1,4);
+		layout2.setConstraints(title2, 2,4);
 		
 
 		Label openingPrice = new Label("Opening Price: " + open);
 		openingPrice.setFont(new Font("Arial", 20));
 		openingPrice.setTextFill(Color.WHITE);
-		layout2.setConstraints(openingPrice, 1,20);
+		layout2.setConstraints(openingPrice, 2,25);
 		
 		Label highestPrice = new Label("Highest Price: " + high);
 		highestPrice.setFont(new Font("Arial", 20));
 		highestPrice.setTextFill(Color.WHITE);
-		layout2.setConstraints(highestPrice, 1,25);
+		layout2.setConstraints(highestPrice, 2,30);
 		
 		Label lowestPrice = new Label("Lowest Price: " + low);
 		lowestPrice.setFont(new Font("Arial", 20));
 		lowestPrice.setTextFill(Color.WHITE);
-		layout2.setConstraints(lowestPrice, 1,30);
+		layout2.setConstraints(lowestPrice, 2,35);
 		
 		Label closePrice = new Label("Close Price: " + close);
 		closePrice.setFont(new Font("Arial", 20));
 		closePrice.setTextFill(Color.WHITE);
-		layout2.setConstraints(closePrice, 1,35);
+		layout2.setConstraints(closePrice, 40,25);
 		
 		Label volume = new Label("Volume(Number of trades): " + vol);
 		volume.setFont(new Font("Arial", 20));
 		volume.setTextFill(Color.WHITE);
-		layout2.setConstraints(volume, 1,40);
+		layout2.setConstraints(volume, 40,30);
 
-		//Label change = new Label("Change(In price):");
-		//change.setFont(new Font("Arial", 20));
-		//change.setTextFill(Color.WHITE);
-		//layout2.setConstraints(change, 10,35);
+	/*	Label change = new Label("");
+		change.setFont(new Font("Arial", 20));
+		change.setTextFill(Color.WHITE);
+		layout2.setConstraints(change, 40,35);*/
 		
 		Label time = new Label("Date: " + date);
 		time.setFont(new Font("Arial", 20));
 		time.setTextFill(Color.WHITE);
-		layout2.setConstraints(time, 1,10);
+		layout2.setConstraints(time, 2,10);
 		
 		Label stock = new Label("Symbol " + symbol2);
 		stock.setFont(new Font("Arial", 20));
 		stock.setTextFill(Color.WHITE);
-		layout2.setConstraints(stock, 1,20);
-		
+		layout2.setConstraints(stock, 2,20);
+		/*
 		Label graphDisplay = new Label("Graph Display:");
 		graphDisplay.setFont(new Font("Arial", 20));
 		graphDisplay.setTextFill(Color.WHITE);
-		layout2.setConstraints(graphDisplay, 1, 90);
+		layout2.setConstraints(graphDisplay, 2, 40);*/
 		
 		ChoiceBox <String> freq = new ChoiceBox<>();
 		freq.getItems().addAll("Daily", "Weekly", "Monthly");
 		freq.setValue("Daily");
 		//stocksMenu.setStyle("-fx-background-color: blue");
-		layout2.setConstraints(freq, 1, 80);
+		layout2.setConstraints(freq, 2, 85);
 		
 		searchSymbol.setOnAction(e -> {
 			yahooFinance search = new yahooFinance();
 			String symb = symbol.getText();
 			try {
-				
 				symbol2 = search.getSymbol(symb).toString();
 				date = search.getDate(symb).toString();
 			    open = search.getOpeningPrice(symb).toString();
@@ -256,9 +257,9 @@ public void start(Stage primaryStage) throws Exception {
 				volume.setText("Volume: " + vol);
 				
 				sendingQuotes send = new sendingQuotes();
+				System.out.println(symb+ "THIS IS THE SYMBOL");
 		 		send.sendQuotes(symb);
-		 		subPlot sendSymbol = new subPlot(symb, frame, symbol2);
-		 
+		 		//subPlot sendSymbol = new subPlot(symb, frame, symbol2);
 				
 			} catch (IOException e1) {
 				e1.printStackTrace();
@@ -267,71 +268,53 @@ public void start(Stage primaryStage) throws Exception {
 			
 		});
 		
-		//subPlot plot = new subPlot("JFreechart", 2, "GLD");
-		//JFreeChart chart = plot.returnChart();
-	    //ChartPanel panel = plot.returnPanel();
-	    final SwingNode chartSwingNode = new SwingNode();
-		
 		Button set = new Button("Draw Graph");
-		
 		set.setOnAction(e -> {
-			int choice = 0;
+			int choice;
 			if (freq.getValue().equals("Daily")) {
-			JFreeChart chart = drawGraph(1, symbol2);
-			ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
-			chartSwingNode.setContent(panel);
-			chartSwingNode.setVisible(true);
-			layout2.setConstraints(chartSwingNode,1,120);
+			drawGraph(1, symbol2);
 			choice = 1;
 			}
 			else if (freq.getValue().equals("Weekly")){
-			JFreeChart chart = drawGraph(2, symbol2);
-			ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
-		//  panel.setSize(2000, 3000);
-			chartSwingNode.setContent(panel);
-			chartSwingNode.setVisible(true);
-			layout2.setConstraints(chartSwingNode, 1, 120);
+			drawGraph(2, symbol2);
 			choice = 2;
 			}
-			else if (freq.getValue().equals("Monthly")) {
-			JFreeChart chart = drawGraph(3, symbol2);
-			ChartPanel panel = new ChartPanel(chart, true, true, true, true, true);
-		//	panel.setSize(2000, 3000);
-			chartSwingNode.setContent(panel);
-			chartSwingNode.setVisible(true);
-			layout2.setConstraints(chartSwingNode,1, 120);
+			else if (freq.getValue().equals("Monthly"))
+			drawGraph(3, symbol2);
 			choice = 3;
-			}
 			
 		subPlot save = new subPlot("Test", choice, symbol2);
 		save.createPNG(symbol2);
 			
 		});
-		layout2.setConstraints(set, 1, 65);	
+		layout2.setConstraints(set, 2, 75);	
 		
 		Button addEmail = new Button("Add emails");
-		layout2.setConstraints(addEmail,1,45);
+		layout2.setConstraints(addEmail,2,55);
 		addEmail.setOnAction(e -> {
 			window.setScene(emailPage);
 		});
 		
 		Button setFollow = new Button("Following");
-		layout2.setConstraints(setFollow,1,55);
+		layout2.setConstraints(setFollow,2,65);
 		setFollow.setOnAction(e -> {
 			window.setScene(follow);
+		 	followingList.getItems().addAll(followingStocks);
+		//	makePers();
 		});
 		
-		BackgroundImage BI2= new BackgroundImage(new Image("/lll.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+		BackgroundImage BI2= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/mainImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
 			     BackgroundSize.DEFAULT);
 		  
 		 //Open, high, low, close, volume
 
 		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, closePrice
-				,freq, set, addEmail, symbol,searchSymbol,setFollow,chartSwingNode, graphDisplay);
+				,freq, set, addEmail, symbol, searchSymbol, stock, setFollow);
 		//layout2.setStyle("-fx-background-color: black");
 		layout2.setBackground(new Background(BI2));
 		//layout2.setBackground(new Background(myBI));
-		main = new Scene(layout2,1000,900);
+		main = new Scene(layout2,900,500);
+		
 		window.setOnCloseRequest(e -> {
 			e.consume();
 			closeProgram();
@@ -341,13 +324,13 @@ public void start(Stage primaryStage) throws Exception {
 		
 		GridPane layout3 = new GridPane();
 		layout3.setPadding(new Insets(10,10,10,10));
-		//The spacing vertically is 8 and horizonatlly is 10.
+		//The spacing vertically is 8 and horizontally is 10.
 		layout3.setVgap(8);
 		layout3.setHgap(10);
 		
 		layout3.setStyle("-fx-background-color: black");
 		
-		 emailPage = new Scene(layout3,500,500);
+		 emailPage = new Scene(layout3,550,500);
 		 
 		 Button backButton = new Button("Return");
 		 layout3.setConstraints(backButton,0,1);
@@ -376,8 +359,9 @@ public void start(Stage primaryStage) throws Exception {
 			layout3.setConstraints(send,0,4);
 			send.setOnAction(e->{
 				emails.addAll(listView.getSelectionModel().getSelectedItems());
+				createFile();
 				sendEmails sendEmail = new sendEmails();
-				sendEmail.emailCode(emails, date, symbol2, close, open, high, low, vol);
+				sendEmail.emailCode(followingStocks, emails, date, symbol2, close, open, high, low, vol);
 			});
 		 
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
@@ -403,8 +387,11 @@ public void start(Stage primaryStage) throws Exception {
 			 Button followButton = new Button("follow");
 			 layout4.setConstraints(followButton, 0 , 100);	
 			 	followButton.setOnAction(e -> {
+			 		followingStocks.add(typeFollowed.getText());
+			 		followingList.getItems().addAll(typeFollowed.getText());
+			 		
 			 		if(typeFollowed.getText().length()/3<5){
-			 			makePers();
+			 			//makePers();
 			 		}
 			 		else
 			 			System.out.println("no");
@@ -417,14 +404,14 @@ public void start(Stage primaryStage) throws Exception {
 		   	 layout4.setConstraints(backButton,0,1);
 		   	 
 		   	Button removeFollow = new Button ("Remove");
-			layout4.setConstraints(removeFollow,20,20);
+			layout4.setConstraints(removeFollow,0,90);
 			removeFollow.setOnAction(e -> {
 				followingStocks.remove(followingList.getSelectionModel().getSelectedItems());
 				String selectedIndex;
 				String text ="";
 				selectedIndex = followingList.getSelectionModel().getSelectedItem();
 				followingList.getItems().remove(selectedIndex);
-				deleteTxt(selectedIndex, "src//Data//persFile.txt");
+			//	deleteTxt(selectedIndex, "src//Data//persFile.txt");
 			});
 
 		   	typeFollowed = new TextField("[Enter stocks symbols here you want to follow]");
@@ -458,12 +445,11 @@ public void start(Stage primaryStage) throws Exception {
 	        // loop for each line of input.txt 
 	        while(line != null) 
 	        { 
-	        	
 	        	temp.add(line);
 	            // write only if not 
 	            // present in hashset 
 	        	for(int i=temp.size()-1;i<=(temp.size()-typeFollowed.getText().length()/3);i++) {
-	        		System.out.println(i);
+	        		//System.out.println(i);
 		            if(hs.add(temp.get(i))) 
 		                followingStocks.add(line); 
 	        }
@@ -493,7 +479,7 @@ public void start(Stage primaryStage) throws Exception {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
 			
 			for (String line; (line = reader.readLine()) != null; x++) {
-				System.out.println("asdfasdfadsf");
+				
 				 if (!line.equals(selectedIndex)) {
 					temp.add(line);
 					if(!hash.add(temp.get(x-1)))
@@ -501,7 +487,7 @@ public void start(Stage primaryStage) throws Exception {
 				 }
 			}
 			for(int i=0;i<temp.size();i++) {
-				System.out.println(temp.get(i)+"asd");
+			//	System.out.println(temp.get(i)+"asd");
 				writer.append(temp.get(i));
 				writer.newLine();
 			}
@@ -510,7 +496,7 @@ public void start(Stage primaryStage) throws Exception {
 			writer.close();
 			reader.close();
 		} catch (IOException e) {
-
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -523,11 +509,11 @@ public void start(Stage primaryStage) throws Exception {
 		
 	}
 	 
-	 public JFreeChart drawGraph (int change, String symb) {
-		 	subPlot chart = new subPlot(symb, change, symb);
-			return chart.createChart(change, symb);
-			// RefineryUtilities.centerFrameOnScreen(chart);
-		    //chart.setVisible(true);
+	 public void drawGraph (int change, String symb) {
+		 subPlot chart = new subPlot(symb, change, symb);
+			chart.pack();
+		    RefineryUtilities.centerFrameOnScreen(chart);
+		    chart.setVisible(true);
 	 }
 	 
 	 public void createFile() {
@@ -545,9 +531,10 @@ public void start(Stage primaryStage) throws Exception {
 				 f = new formulas("src//Data//"+followingStocks.get(i)+" "+ type[j]);
 				 signals s = new signals(f.values);
 				 signals[j] = s.makeSignal();
+
+				 c.createImageFile(followingStocks.get(i));
 			 }
 			 c.createTxtFile(signals, f.values);
-			 c.createImageFile();
 		 }
 	 }
 	 
