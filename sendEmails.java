@@ -1,3 +1,5 @@
+//Class Name: sendEmails
+//Description: To generate and send the files to the email addresses provided by the user. 
 package stockMarketAnalysis;
 
 
@@ -24,25 +26,34 @@ public class sendEmails {
 		emailCode(null, null, "SLV", null, null,null,null,null);
 	}
 	
+	//Main method which holds all of the neccesary code to send the email.
 	 public static void emailCode (ArrayList<String>emails, String date, String symbol, String close,String open,String high,String low, String vol) {
-		  
+		 
+		 //Creates an array from the passed in ArrayList. 
 		  String [] emailArray = emails.toArray(new String[emails.size()]);
+		  //Specifies the login information for our smartinvestofficial email account.
 		  String myEmail = "smartinvestofficial@gmail.com";
 		  String password = "SmartInvest@4567";
 		  
+		  //In a for loop, goes through all the emails in the email list and sends the following to all of them.
 		 for (int i = 0; i < emailArray.length; i++) {  
 		  String opponentEmail = emailArray[i];
+		  //Sets some of the necessary properties for the email.
 		  Properties pro = new Properties();
 		  pro.put("mail.smtp.host", "smtp.gmail.com");
 		  pro.put("mail.smtp.starttls.enable", "true");
 		  pro.put("mail.smtp.auth", "true");
 		  pro.put("mail.smtp.port", "587");
+		  
+		  //This part is mainly used as an authenticator to get into the smart invest email account through the program.
 		  Session ss = Session.getInstance(pro, new javax.mail.Authenticator() {
 		   @Override
 		   protected PasswordAuthentication getPasswordAuthentication() {
 		    return new PasswordAuthentication(myEmail, password);
 		   }
 		  });
+		  
+		  //This part creates the message as an smtp type.
 		  try {
 		        Message message = new MimeMessage(ss);
 		        message.setFrom(new InternetAddress(myEmail));
@@ -55,7 +66,9 @@ public class sendEmails {
 
 		        Multipart multipart = new MimeMultipart();
 
+		        
 		        messageBodyPart = new MimeBodyPart();
+		        //Sends the files from the file location specified.
 		        String file = "src//Email Files//test.txt";
 		        String fileName = "daily report";
 		        DataSource source = new FileDataSource(file);
