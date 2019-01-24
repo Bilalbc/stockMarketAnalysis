@@ -13,14 +13,5 @@ public class main {
 
  		Application.launch(launchPage.class, args);
  		
- 		//File file = new File("src//Data//persFile.txt");
- 		
- 	//	createFiles c = new createFiles();
- 	//	c.createImageFile();
- 		//launchPage l = new launchPage();
- 		//l.createFile();
- 		//analyzeStock history = new analyzeStock();
- 		//history.historyStock();
-		
  		 }
  	}

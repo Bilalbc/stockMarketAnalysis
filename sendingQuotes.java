@@ -1,5 +1,24 @@
-//Class Name: sendingQuotes
-//Description: The main point of this class is to gather the necessary methods, sort them and then write to the files for the graph to read from. 
+package stockMarketAnalysis;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,6 +55,8 @@ public class sendingQuotes {
 		ArrayList<String> array2 = new ArrayList<String>(readToSend.readToHistory(symb, 2, "Weekly"));
 		ArrayList<String> array3 = new ArrayList<String>(readToSend.readToHistory(symb, 20, "Monthly"));
 		  
+		array3.remove(0);
+		
 		  //Class the three methods
 		  saveToFileDaily(filePath, array, symb);
 		  saveToFileWeekly(filePath, array2, symb);
@@ -91,11 +112,3 @@ public class sendingQuotes {
 		
 
 	}
-		
-
-	
-
-
-	
-	
-

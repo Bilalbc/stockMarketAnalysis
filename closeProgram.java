@@ -1,5 +1,8 @@
 //Class Name: closeProgram
 //Description: This is a simple class which is mainly used for popping up a prompt to check if the user is sure that they want to exit the program.
+
+package stockMarketAnalysis;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;

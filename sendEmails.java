@@ -1,8 +1,7 @@
-//Class Name: sendEmails
-//Description: To generate and send the files to the email addresses provided by the user. 
 package stockMarketAnalysis;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -21,14 +20,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 public class sendEmails {
-
-	public static void main(String[]args) {
-		emailCode(null, null, "SLV", null, null,null,null,null);
-	}
 	
-	//Main method which holds all of the neccesary code to send the email.
-	 public static void emailCode (ArrayList<String>emails, String date, String symbol, String close,String open,String high,String low, String vol) {
-		 
+	 public static void emailCode (ArrayList<String>followingStocks, ArrayList<String>emails, String date, String symbol, String close,String open,String high,String low, String vol) {
+		  
 		 //Creates an array from the passed in ArrayList. 
 		  String [] emailArray = emails.toArray(new String[emails.size()]);
 		  //Specifies the login information for our smartinvestofficial email account.
@@ -54,6 +48,7 @@ public class sendEmails {
 		  });
 		  
 		  //This part creates the message as an smtp type.
+		 
 		  try {
 		        Message message = new MimeMessage(ss);
 		        message.setFrom(new InternetAddress(myEmail));
@@ -66,15 +61,30 @@ public class sendEmails {
 
 		        Multipart multipart = new MimeMultipart();
 
-		        
 		        messageBodyPart = new MimeBodyPart();
+
 		        //Sends the files from the file location specified.
-		        String file = "src//Email Files//test.txt";
+		        String file = "src//Email Files//status.txt";
 		        String fileName = "daily report";
 		        DataSource source = new FileDataSource(file);
 		        messageBodyPart.setDataHandler(new DataHandler(source));
 		        messageBodyPart.setFileName(fileName);
 		        multipart.addBodyPart(messageBodyPart);
+		        
+		        //attaching files of all followed stocks 
+		        for(int j=0;j<followingStocks.size();j++) {
+		        	MimeBodyPart attachPart = new MimeBodyPart();
+
+		        	file = "src//Email Files//"+followingStocks.get(j)+".png";
+		        	  
+		                try {
+		                    attachPart.attachFile(file);
+		                } catch (IOException ex) {
+		                    ex.printStackTrace();
+		                }
+		 
+		            multipart.addBodyPart(attachPart);
+		        }
 
 		        message.setContent(multipart);
 
@@ -89,9 +99,4 @@ public class sendEmails {
 		    }
 		  }
 	 }
-	 
-	 
-	
-	
-	
 }

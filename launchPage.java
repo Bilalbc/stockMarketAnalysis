@@ -1,10 +1,5 @@
-//Class Name: launchPage
-//Description: This class is what holds the entire GUI and all its neccesary components. This includes things like the following and email lists, the drawGraph and quote display
-// and the search feature. 
-
 package stockMarketAnalysis;
 
-//All import necessary for JavaFx, some Jfreechart and FileIO
 import java.util.ArrayList;
 
 import javafx.scene.layout.BackgroundImage;
@@ -44,9 +39,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import stockAnalysisProgram.closeProgram;
-import stockAnalysisProgram.createFiles;
-import stockAnalysisProgram.sendEmails;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
@@ -91,9 +83,7 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import javafx.scene.image.*;
 
-//Main application class
 public class launchPage extends Application{
-	//Declaring certain GUI components. 
 	Stage window;
 	Scene launch, main, emailPage, follow;
 	Label timInterval;
@@ -111,7 +101,7 @@ public class launchPage extends Application{
  	private signals s;
  	private int frame = 20;
 	readFile r;
-	
+
 	//Declaring ArrayLists
 	public ArrayList <String> emails = new ArrayList();
 	public ArrayList <String> followingStocks = new ArrayList();
@@ -119,43 +109,41 @@ public class launchPage extends Application{
 	HashSet<String> hs;
 
 	@SuppressWarnings("restriction")
-	
+
 	//Main start method for launchPage
 	public void start(Stage primaryStage) throws Exception {
-		
+
 		//Creates instance of yahooFinance class.
 		yahooFinance stats = new yahooFinance();
-		
-		//Making the window
 		window = primaryStage;
 		window.setTitle("SmartInvest");
 		window.setResizable(false);
 		
 		//LAUNCH SCENE:
 		
-		//Making first layout
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10,10,10,10));
-		//The spacing vertically is 8 and horizontally is 10.
+		//The spacing vertically is 8 and horizonatlly is 10.
 		grid.setVgap(8);
 		grid.setHgap(10);
 		
-		//Email Label
+		//email Label
 		Label email = new Label("Email:");
 		email.setTextFill(Color.WHITE);
 		email.setFont(new Font("Helvetica",15));
 		GridPane.setConstraints(email,6,14);
 		
-		//Email TextField
+		
+		//email Textfield
 		TextField newInput = new TextField("ex.SmartInvest1234@hotmail.com");
 		newInput.setStyle("-fx-background-color: white; ");
 		GridPane.setConstraints(newInput, 7, 14);
 		
-		//Login Button
+		//login button
 		Button loginButton = new Button("Next");
 		loginButton.setStyle("-fx-background-color: white; ");
+		//When button is clicked, these actions occur (adds email to arrayList and ListView and changes scene)
 		loginButton.setOnAction(e -> {
-			//When button is clicked, these actions occur (adds email to arrayList and ListView and changes scene)
 			emails.add(newInput.getText());
 			listView.getItems().addAll(newInput.getText());
 			window.setScene(main);
@@ -164,12 +152,14 @@ public class launchPage extends Application{
 		
 		//Label Title
 		Label title = new Label("SmartInvest");
+		
 		title.setFont(Font.font("Copperplate Gothic Light", 27));
 		title.setTextFill(Color.WHITE);
 		GridPane.setConstraints(title, 7, 4);
+		
 
-			//Makes background image for the first scene.
-			BackgroundImage myBI= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/launchImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+		//Makes background image for the first scene.
+	BackgroundImage myBI= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/launchImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
 		     BackgroundSize.DEFAULT);
 		
 		//Adds all components to the layout.
@@ -181,24 +171,25 @@ public class launchPage extends Application{
 		
 		//MAIN GUI:
 		
-		//Making layout for the second scene.
+		//making layout for second scene
 		GridPane layout2 = new GridPane();
 		layout2.setPadding(new Insets(10,10,10,10));
 		layout2.setVgap(1);
 		layout2.setHgap(1);
 		
-		
-		//Making several components for the Graphical User Interface: These include labels for display purpsoes and buttons.  
+		//Making several components for the Graphical User Interface: These include labels for display purpsoes and buttons.
 		TextField symbol = new TextField("ex.GLD");
 		layout2.setConstraints(symbol,90,20);
 		
 		Button searchSymbol = new Button("Search");
 		layout2.setConstraints(searchSymbol,100,20);
+	
 		
 		Label title2 = new Label("SmartInvest");
 		title2.setFont(new Font("Copperplate Gothic Light", 40));
 		title2.setTextFill(Color.WHITE);
 		layout2.setConstraints(title2, 2,4);
+		
 
 		Label openingPrice = new Label("Opening Price: " + open);
 		openingPrice.setFont(new Font("Arial", 20));
@@ -224,7 +215,7 @@ public class launchPage extends Application{
 		volume.setFont(new Font("Arial", 20));
 		volume.setTextFill(Color.WHITE);
 		layout2.setConstraints(volume, 40,30);
-
+		
 		Label time = new Label("Date: " + date);
 		time.setFont(new Font("Arial", 20));
 		time.setTextFill(Color.WHITE);
@@ -246,7 +237,7 @@ public class launchPage extends Application{
 			yahooFinance search = new yahooFinance();
 			String symb = symbol.getText();
 			try {
-				
+
 				//Gets all the quotes of the stocks for the symbol passed through
 				symbol2 = search.getSymbol(symb).toString();
 				date = search.getDate(symb).toString();
@@ -265,17 +256,19 @@ public class launchPage extends Application{
 				lowestPrice.setText("Lowest Price: " + low);
 				volume.setText("Volume: " + vol);
 				
-				
 				sendingQuotes send = new sendingQuotes();
+				System.out.println(symb+ "THIS IS THE SYMBOL");
 		 		send.sendQuotes(symb);
 				
 			} catch (IOException e1) {
 				e1.printStackTrace();
+	
 			}
 			
 		});
 		
-		//When the draw graph button is clicked, check the selected frequency in the choice box. Call the draw graph method depending on the user's selection. 
+		//When the draw graph button is clicked, check the selected frequency 
+		//the choice box. Call the draw graph method depending on the user's selection. 
 		Button set = new Button("Draw Graph");
 		set.setOnAction(e -> {
 			int choice;
@@ -304,33 +297,37 @@ public class launchPage extends Application{
 		addEmail.setOnAction(e -> {
 			window.setScene(emailPage);
 		});
-		
+
 		//Button which switches scenes. 
 		Button setFollow = new Button("Following");
 		layout2.setConstraints(setFollow,2,65);
 		setFollow.setOnAction(e -> {
 			window.setScene(follow);
 		 	followingList.getItems().addAll(followingStocks);
+			makePers();//adds followed stocks to file for storage
 		});
 		
+
 		//Second background image which is displayed in the main scene.
 		BackgroundImage BI2= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/mainImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
 			     BackgroundSize.DEFAULT);
-		  
 
 
 		//Adds all the components of the GUI to the layout.
 		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, closePrice
 				,freq, set, addEmail, symbol, searchSymbol, stock, setFollow);
+		layout2.setBackground(new Background(BI2));
 		//Makes the main scene and sets its layout.
 		main = new Scene(layout2,900,500);
 		
+
 		//Calls the methods below when the window is requested to close. 
 		window.setOnCloseRequest(e -> {
 			e.consume();
 			closeProgram();
 		});
 		
+
 		//Add Email GUI
 		
 		//Making the layout for the add Email GUI.
@@ -349,8 +346,7 @@ public class launchPage extends Application{
 		 layout3.setConstraints(backButton,0,1);
 		 backButton.setOnAction(e -> {
 			 window.setScene(main);
-		
-		 });
+		 });	
 		 
 		 	//A ListView to display the the list of emails the user adds. 
 		 	listView = new ListView<>();
@@ -368,7 +364,7 @@ public class launchPage extends Application{
 				listView.getItems().addAll(emailAddition.getText());
 				
 			});
-			
+
 			//This button is called when the user wishes to send the email. Uses the selection model method to check the selected emails on the ListView and adds those to the ArrayList. 
 			Button send = new Button("Send Now");
 			layout3.setConstraints(send,0,4);
@@ -380,7 +376,9 @@ public class launchPage extends Application{
 				//Class the emailCode method.
 				sendEmail.emailCode(followingStocks, emails, date, symbol2, close, open, high, low, vol);
 			});
-		 
+
+
+			 
 			//Adds all the GUI components to the layout.
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
 			layout3.setStyle("-fx-background-color: black");
@@ -400,6 +398,7 @@ public class launchPage extends Application{
 				 window.setScene(main);
 			 });
 			 
+			 
 			 //Makes a ListView to display stocks being followed.
 			 followingList = new ListView<>();
 			 followingList.getItems();
@@ -412,51 +411,54 @@ public class launchPage extends Application{
 			 		followingStocks.add(typeFollowed.getText());
 			 		followingList.getItems().addAll(typeFollowed.getText());
 			 		
-			 		if(typeFollowed.getText().length()/3<5){
-			 			//makePers();
-			 		}
-			 		else
-			 			System.out.println("no");
-			 });
+			 	});
 			 
-			layout4.setConstraints(backButton,0,1);
-		   	
-			//The button allows for the removal of the selected Stocks from both the ListView and the ArrayList. 
-		   	Button removeFollow = new Button ("Remove");
-			layout4.setConstraints(removeFollow,0,90);
-			removeFollow.setOnAction(e -> {
-				followingStocks.remove(followingList.getSelectionModel().getSelectedItems());
-				String selectedIndex;
-				String text ="";
-				selectedIndex = followingList.getSelectionModel().getSelectedItem();
-				followingList.getItems().remove(selectedIndex);
-			//	deleteTxt(selectedIndex, "src//Data//persFile.txt");
-			});
+			 	 
+				layout4.setConstraints(backButton,0,1);
+			   	
+				//The button allows for the removal of the selected Stocks from both the ListView and the ArrayList. 
+			   	Button removeFollow = new Button ("Remove");
+				layout4.setConstraints(removeFollow,0,90);
+				removeFollow.setOnAction(e -> {
+					followingStocks.remove(followingList.getSelectionModel().getSelectedItems());
+					String selectedIndex;
+					String text ="";
+					selectedIndex = followingList.getSelectionModel().getSelectedItem();
+					followingList.getItems().remove(selectedIndex);
+				//	deleteTxt(selectedIndex, "src//Data//persFile.txt");
+				});
 
-			//A TextField where the user can enter the stock symbol they wish to add to the following list.
-		   	typeFollowed = new TextField("[Enter stocks symbols here you want to follow]");
-		   	layout4.setConstraints(typeFollowed, 100, 0);
-		   	 
-		   	//Adds all the GUI components to the layout.
-			layout4.getChildren().addAll(backButton2, followingList, typeFollowed, followButton, removeFollow);
-			layout4.setStyle("-fx-background-color: black");
-			//Creates follow scene and sets its layout and its size.
-			follow = new Scene(layout4,450,450);
-			
-			//displays window
-			window.show();
+				//A TextField where the user can enter the stock symbol they wish to add to the following list.
+			   	typeFollowed = new TextField("[Enter stocks symbols here you want to follow]");
+			   	layout4.setConstraints(typeFollowed, 100, 0);
+			   	 
+			   	//Adds all the GUI components to the layout.
+				layout4.getChildren().addAll(backButton2, followingList, typeFollowed, followButton, removeFollow);
+				layout4.setStyle("-fx-background-color: black");
+				//Creates follow scene and sets its layout and its size.
+				follow = new Scene(layout4,450,450);
+				
+				//displays window
+				window.show();
 	
 	}
 	
+	/*
+	 *method used to create a file on the computer containing information of the stocks that 
+	 *the user has chosen to follow
+	 */
 	private void makePers() {
+		//clearing list and array 
 	 	followingList.getItems().clear();
 		followingStocks.clear();
 		
 		try {
+			//writer and reader for file
 			BufferedWriter writer = new BufferedWriter(new FileWriter("src//Data//persFile.txt", true));
 			BufferedReader reader = new BufferedReader(new FileReader("src//Data//persFile.txt"));
 			
 
+			//typing all of the stocks that the user has followed 
 			ArrayList<String>temp = new ArrayList<String>();
 			writer.append(typeFollowed.getText()+"\n");
 			String line = reader.readLine(); 
@@ -471,11 +473,10 @@ public class launchPage extends Application{
 	            // write only if not 
 	            // present in hashset 
 	        	for(int i=temp.size()-1;i<=(temp.size()-typeFollowed.getText().length()/3);i++) {
-	        		//System.out.println(i);
-		            if(hs.add(temp.get(i))) 
+		            if(hs.add(temp.get(i))) //if this item is new in the hash set 
 		                followingStocks.add(line); 
 	        }
-	            line = reader.readLine(); 
+	            line = reader.readLine(); //read next line
 	            
 	        } 
 	        writer.flush(); 
@@ -484,12 +485,15 @@ public class launchPage extends Application{
 	        reader.close(); 
 	        writer.close(); 
 
-		 	followingList.getItems().addAll(followingStocks);
+		 	followingList.getItems().addAll(followingStocks);//add the stocks as a display in window 
 		 	
 		} catch (IOException e1) {}
 
 	}
 	
+	/*
+	 * method used for the user to delete stocks in the follow list 
+	 */
 	private void deleteTxt(String selectedIndex, String file) {
 		
 		int x =0;
@@ -497,22 +501,26 @@ public class launchPage extends Application{
 
 		HashSet<String> hash = new HashSet<String>(); 
 		try {
+			//initialize reader and writer
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
 			
+			//while the line has text 
 			for (String line; (line = reader.readLine()) != null; x++) {
 				
+				//if it is not the text that we are looking to delete
 				 if (!line.equals(selectedIndex)) {
-					temp.add(line);
-					if(!hash.add(temp.get(x-1)))
+					temp.add(line);//add to temporary array list
+					if(!hash.add(temp.get(x-1)))//if this is not unique in the hash list remove it from array 
 						temp.remove(x);
 				 }
 			}
 			for(int i=0;i<temp.size();i++) {
-			//	System.out.println(temp.get(i)+"asd");
+				//write out the temporary array this time without the slected index
 				writer.append(temp.get(i));
 				writer.newLine();
 			}
+			//close and clear arrays
 			
 			temp.clear();
 			writer.close();
@@ -524,59 +532,57 @@ public class launchPage extends Application{
 		
 	}
 	
-	//Calls the close program class method and sends mails on close. 
+	/*
+	 * method used to close program
+	 */
 	private void closeProgram() {
-		Boolean anwser = closeProgram.display("", "Are you sure you want to exit?");
-		if (anwser) {
+		Boolean anwser = closeProgram.display("", "Sure you want to exit?");
+		if (anwser)
 			window.close();
-			sendEmails sendEmail = new sendEmails();
-			sendEmail.emailCode(emails, date, symbol2, close, open, high, low, vol);
-			}
-		createFiles c = new createFiles();
-		c.createTxtFile(followingStocks);
-		System.out.println(followingStocks.get(0));
+		createFile();
+		
 	}
 	 
+	/*
+	 * method used to draw the graph when prompted 
+	 */
 	 public void drawGraph (int change, String symb) {
+		 //call subplot class to draw graph 
 		 subPlot chart = new subPlot(symb, change, symb);
 			chart.pack();
+			//center the graph
 		    RefineryUtilities.centerFrameOnScreen(chart);
+		    //set it to visible
 		    chart.setVisible(true);
 	 }
-	 
+	 /*
+	  * method used to create prompt the creation of the text and image file 
+	  */
 	 public void createFile() {
-		 signals = new String[3];
+		 signals = new String[3];//array to store the return of making signals
 		 String [] type = new String[3];
+		 //Separate types of files
 		 type[0]= "Monthly - 5 years.txt";
 		 type[1]= "Weekly - 2 years.txt";
 		 type[2]= "Daily - 1 year.txt";
 		 
 		 createFiles c = new createFiles(followingStocks);
 		 
-		 
+		 //loop to cycle through all the stocks on user's follow list 
 		 for(int i=0;i<followingStocks.size();i++) {
+			 //to run through all frequencies of the charts 
 			 for(int j=0;j<3;j++) {
+				 //creating values for each of these charts
 				 f = new formulas("src//Data//"+followingStocks.get(i)+" "+ type[j]);
+				 //making signals for the charts 
 				 signals s = new signals(f.values);
 				 signals[j] = s.makeSignal();
 
+				 //creating files
 				 c.createImageFile(followingStocks.get(i));
 			 }
 			 c.createTxtFile(signals, f.values);
 		 }
 	 }
 	 
-	 //Method required to load the image in order to generate the background image for the scenes. 
-	 private BufferedImage loadBufferedImage(String string)
-		{
-		    try
-		    {
-		        BufferedImage bi = ImageIO.read(this.getClass().getResource(string));
-		        return bi;
-		    } catch (IOException e)
-		    {
-		        e.printStackTrace();
-		    }
-		    return null;
-		}
 }

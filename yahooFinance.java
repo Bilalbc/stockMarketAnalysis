@@ -1,5 +1,4 @@
-//Class Name: yahooFinance
-//Description: The main idea of this class is to make all the methods for getting the quotes from the yahooFinance API by using the already provided methods by the API. Relies on the pom.xml file.
+package stockMarketAnalysis;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -114,11 +113,10 @@ public class yahooFinance {
 	//Method: getHistory
 	//Mainly a test method used to test the calender and the historical quote methods and how the interval part works.
 	 
-	/* public void getHistory(String stockName, int year, String searchType) throws IOException {
+	 public void getHistory(String stockName, int year, String searchType) throws IOException {
 			Calendar from = Calendar.getInstance();
 			Calendar to = Calendar.getInstance();
 			from.add(Calendar.YEAR, Integer.valueOf("-" + year));
-
 			Stock stock = YahooFinance.get(stockName);
 			List<HistoricalQuote> history = stock.getHistory(from, to, getInterval(searchType));
 			for (HistoricalQuote quote : history) {
@@ -132,8 +130,7 @@ public class yahooFinance {
 				System.out.println("=========================================");
 			}
 			
-
-		}*/
+		}
 	 
 	 //readToHistory method is important as it gathers all the methods above and stores them in an ArrayList. 
 	 public ArrayList readToHistory(String stockName, int year, String searchType) throws IOException {
@@ -182,6 +179,3 @@ public class yahooFinance {
 
 	
 }
-	
-	
-
