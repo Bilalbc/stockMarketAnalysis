@@ -1,5 +1,10 @@
+//Class Name: launchPage
+//Description: This class is what holds the entire GUI and all its neccesary components. This includes things like the following and email lists, the drawGraph and quote display
+// and the search feature. 
+
 package stockMarketAnalysis;
 
+//All import necessary for JavaFx, some Jfreechart and FileIO
 import java.util.ArrayList;
 
 import javafx.scene.layout.BackgroundImage;
@@ -39,6 +44,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import stockAnalysisProgram.closeProgram;
+import stockAnalysisProgram.createFiles;
+import stockAnalysisProgram.sendEmails;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
@@ -83,13 +91,16 @@ import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 import javafx.scene.image.*;
 
+//Main application class
 public class launchPage extends Application{
+	//Declaring certain GUI components. 
 	Stage window;
 	Scene launch, main, emailPage, follow;
 	Label timInterval;
 	ListView<String> listView, followingList;
 	TextField typeFollowed;
 	
+	//Declaring and initializing variables.
 	String close = "",open = "",vol = "",symbol2 = "",high = "",low= "",date = "";
 	
 	private static String fileLoc;
@@ -100,90 +111,94 @@ public class launchPage extends Application{
  	private signals s;
  	private int frame = 20;
 	readFile r;
-
+	
+	//Declaring ArrayLists
 	public ArrayList <String> emails = new ArrayList();
 	public ArrayList <String> followingStocks = new ArrayList();
 	public String [] signals;
 	HashSet<String> hs;
 
 	@SuppressWarnings("restriction")
-public void start(Stage primaryStage) throws Exception {
+	
+	//Main start method for launchPage
+	public void start(Stage primaryStage) throws Exception {
 		
+		//Creates instance of yahooFinance class.
 		yahooFinance stats = new yahooFinance();
+		
+		//Making the window
 		window = primaryStage;
 		window.setTitle("SmartInvest");
 		window.setResizable(false);
 		
 		//LAUNCH SCENE:
 		
+		//Making first layout
 		GridPane grid = new GridPane();
 		grid.setPadding(new Insets(10,10,10,10));
-		//The spacing vertically is 8 and horizonatlly is 10.
+		//The spacing vertically is 8 and horizontally is 10.
 		grid.setVgap(8);
 		grid.setHgap(10);
 		
-		//Name Label
+		//Email Label
 		Label email = new Label("Email:");
 		email.setTextFill(Color.WHITE);
 		email.setFont(new Font("Helvetica",15));
-		//Top left
-		
-
 		GridPane.setConstraints(email,6,14);
-		//Name input
-		//Textfield
+		
+		//Email TextField
 		TextField newInput = new TextField("ex.SmartInvest1234@hotmail.com");
 		newInput.setStyle("-fx-background-color: white; ");
 		GridPane.setConstraints(newInput, 7, 14);
 		
+		//Login Button
 		Button loginButton = new Button("Next");
 		loginButton.setStyle("-fx-background-color: white; ");
 		loginButton.setOnAction(e -> {
+			//When button is clicked, these actions occur (adds email to arrayList and ListView and changes scene)
 			emails.add(newInput.getText());
 			listView.getItems().addAll(newInput.getText());
 			window.setScene(main);
 		});
-		//Coloumn, Row//16,30
 		GridPane.setConstraints(loginButton, 6, 15);
 		
 		//Label Title
 		Label title = new Label("SmartInvest");
-		
 		title.setFont(Font.font("Copperplate Gothic Light", 27));
-		//title.setTextFill(Color.web("#0076a3"));
 		title.setTextFill(Color.WHITE);
 		GridPane.setConstraints(title, 7, 4);
 
-	BackgroundImage myBI= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/launchImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+			//Makes background image for the first scene.
+			BackgroundImage myBI= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/launchImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
 		     BackgroundSize.DEFAULT);
 		
+		//Adds all components to the layout.
 		grid.getChildren().addAll(email, newInput, loginButton, title);
 		grid.setBackground(new Background(myBI));
-		//grid.setStyle("-fx-background-color: black");
+		//Makes the first scene and sets its layout and size. Sets it as the main scene.
 		Scene launch = new Scene(grid,420,300);
-     	//launch.setFill(Color.BLACK);
 		window.setScene(launch);
 		
 		//MAIN GUI:
 		
+		//Making layout for the second scene.
 		GridPane layout2 = new GridPane();
 		layout2.setPadding(new Insets(10,10,10,10));
-		//The spacing vertically is 8 and horizonatlly is 10.
 		layout2.setVgap(1);
 		layout2.setHgap(1);
 		
+		
+		//Making several components for the Graphical User Interface: These include labels for display purpsoes and buttons.  
 		TextField symbol = new TextField("ex.GLD");
 		layout2.setConstraints(symbol,90,20);
 		
 		Button searchSymbol = new Button("Search");
 		layout2.setConstraints(searchSymbol,100,20);
-	
 		
 		Label title2 = new Label("SmartInvest");
 		title2.setFont(new Font("Copperplate Gothic Light", 40));
 		title2.setTextFill(Color.WHITE);
 		layout2.setConstraints(title2, 2,4);
-		
 
 		Label openingPrice = new Label("Opening Price: " + open);
 		openingPrice.setFont(new Font("Arial", 20));
@@ -210,11 +225,6 @@ public void start(Stage primaryStage) throws Exception {
 		volume.setTextFill(Color.WHITE);
 		layout2.setConstraints(volume, 40,30);
 
-	/*	Label change = new Label("");
-		change.setFont(new Font("Arial", 20));
-		change.setTextFill(Color.WHITE);
-		layout2.setConstraints(change, 40,35);*/
-		
 		Label time = new Label("Date: " + date);
 		time.setFont(new Font("Arial", 20));
 		time.setTextFill(Color.WHITE);
@@ -224,22 +234,20 @@ public void start(Stage primaryStage) throws Exception {
 		stock.setFont(new Font("Arial", 20));
 		stock.setTextFill(Color.WHITE);
 		layout2.setConstraints(stock, 2,20);
-		/*
-		Label graphDisplay = new Label("Graph Display:");
-		graphDisplay.setFont(new Font("Arial", 20));
-		graphDisplay.setTextFill(Color.WHITE);
-		layout2.setConstraints(graphDisplay, 2, 40);*/
 		
+		//Choice box which allows the user to select the frequency for the graph.
 		ChoiceBox <String> freq = new ChoiceBox<>();
 		freq.getItems().addAll("Daily", "Weekly", "Monthly");
 		freq.setValue("Daily");
-		//stocksMenu.setStyle("-fx-background-color: blue");
 		layout2.setConstraints(freq, 2, 85);
 		
+		//One action, calls neccessary methods from the yahooFinance class after creating an instance of the class.
 		searchSymbol.setOnAction(e -> {
 			yahooFinance search = new yahooFinance();
 			String symb = symbol.getText();
 			try {
+				
+				//Gets all the quotes of the stocks for the symbol passed through
 				symbol2 = search.getSymbol(symb).toString();
 				date = search.getDate(symb).toString();
 			    open = search.getOpeningPrice(symb).toString();
@@ -248,6 +256,7 @@ public void start(Stage primaryStage) throws Exception {
 			    low = search.getLowestPrice(symb).toString();
 				vol = search.getVolume(symb).toString();
 				
+				//Strings the values with the labels.
 				stock.setText("Symbol: " + symbol2);
 				time.setText("Date: " + date);
 				openingPrice.setText("Opening Price: " + open);
@@ -256,18 +265,17 @@ public void start(Stage primaryStage) throws Exception {
 				lowestPrice.setText("Lowest Price: " + low);
 				volume.setText("Volume: " + vol);
 				
+				
 				sendingQuotes send = new sendingQuotes();
-				System.out.println(symb+ "THIS IS THE SYMBOL");
 		 		send.sendQuotes(symb);
-		 		//subPlot sendSymbol = new subPlot(symb, frame, symbol2);
 				
 			} catch (IOException e1) {
 				e1.printStackTrace();
-	
 			}
 			
 		});
 		
+		//When the draw graph button is clicked, check the selected frequency in the choice box. Call the draw graph method depending on the user's selection. 
 		Button set = new Button("Draw Graph");
 		set.setOnAction(e -> {
 			int choice;
@@ -283,38 +291,41 @@ public void start(Stage primaryStage) throws Exception {
 			drawGraph(3, symbol2);
 			choice = 3;
 			
+		//Creates an instance of the subPlot class and calls the createPNG method. 
 		subPlot save = new subPlot("Test", choice, symbol2);
 		save.createPNG(symbol2);
 			
 		});
 		layout2.setConstraints(set, 2, 75);	
 		
+		//Button which switches scenes.
 		Button addEmail = new Button("Add emails");
 		layout2.setConstraints(addEmail,2,55);
 		addEmail.setOnAction(e -> {
 			window.setScene(emailPage);
 		});
 		
+		//Button which switches scenes. 
 		Button setFollow = new Button("Following");
 		layout2.setConstraints(setFollow,2,65);
 		setFollow.setOnAction(e -> {
 			window.setScene(follow);
 		 	followingList.getItems().addAll(followingStocks);
-		//	makePers();
 		});
 		
+		//Second background image which is displayed in the main scene.
 		BackgroundImage BI2= new BackgroundImage(new Image("file:/C:/Users/bilal/git/repository/stockMarketAnalysis/src/stockMarketAnalysis/mainImage.jpg"),BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
 			     BackgroundSize.DEFAULT);
 		  
-		 //Open, high, low, close, volume
 
+
+		//Adds all the components of the GUI to the layout.
 		layout2.getChildren().addAll(highestPrice, lowestPrice, time, title2, openingPrice, volume, closePrice
 				,freq, set, addEmail, symbol, searchSymbol, stock, setFollow);
-		//layout2.setStyle("-fx-background-color: black");
-		layout2.setBackground(new Background(BI2));
-		//layout2.setBackground(new Background(myBI));
+		//Makes the main scene and sets its layout.
 		main = new Scene(layout2,900,500);
 		
+		//Calls the methods below when the window is requested to close. 
 		window.setOnCloseRequest(e -> {
 			e.consume();
 			closeProgram();
@@ -322,16 +333,18 @@ public void start(Stage primaryStage) throws Exception {
 		
 		//Add Email GUI
 		
+		//Making the layout for the add Email GUI.
 		GridPane layout3 = new GridPane();
 		layout3.setPadding(new Insets(10,10,10,10));
-		//The spacing vertically is 8 and horizontally is 10.
 		layout3.setVgap(8);
 		layout3.setHgap(10);
 		
 		layout3.setStyle("-fx-background-color: black");
 		
-		 emailPage = new Scene(layout3,550,500);
+		//Creates the scene and sets the size and layout.
+		emailPage = new Scene(layout3,550,500);
 		 
+		//A button which returns the user to the previous scene.
 		 Button backButton = new Button("Return");
 		 layout3.setConstraints(backButton,0,1);
 		 backButton.setOnAction(e -> {
@@ -339,51 +352,60 @@ public void start(Stage primaryStage) throws Exception {
 		
 		 });
 		 
+		 	//A ListView to display the the list of emails the user adds. 
 		 	listView = new ListView<>();
 			listView.getItems();
 			listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 			
+			//TextField for the user to type in their email address that they want in the list.
 			TextField emailAddition = new TextField("ex.SmartInvest1234@hotmail.com");
-			//Coloumn, Row
 			GridPane.setConstraints(emailAddition, 1, 1);
 			
+			//A button which adds the email's to the ListView. 
 			Button add = new Button("Add");
 			layout3.setConstraints(add,2,1);
-			
 			add.setOnAction(e -> {
 				listView.getItems().addAll(emailAddition.getText());
 				
 			});
 			
+			//This button is called when the user wishes to send the email. Uses the selection model method to check the selected emails on the ListView and adds those to the ArrayList. 
 			Button send = new Button("Send Now");
 			layout3.setConstraints(send,0,4);
 			send.setOnAction(e->{
 				emails.addAll(listView.getSelectionModel().getSelectedItems());
 				createFile();
+				//Makes an object of the sendEmails class.
 				sendEmails sendEmail = new sendEmails();
+				//Class the emailCode method.
 				sendEmail.emailCode(followingStocks, emails, date, symbol2, close, open, high, low, vol);
 			});
 		 
+			//Adds all the GUI components to the layout.
 			layout3.getChildren().addAll(backButton, listView, emailAddition, add, send);
-		//	layout3.setBackglayout4.setStyle("-fx-background-color: black");
 			layout3.setStyle("-fx-background-color: black");
-
-			GridPane.setConstraints(loginButton, 6, 15);
 			
 			//FOLLOW SCENE
 			
+			//Creates the layout for the follow scene.
 			GridPane layout4 = new GridPane();
 			layout4.setPadding(new Insets(10,10,10,10));
 			layout4.setVgap(1);
 			layout4.setHgap(1);
 			
+			//A button which returns the user to the previous scene.
 			 Button backButton2 = new Button("Return");
 			 layout4.setConstraints(backButton2, 100, 100);
 			 backButton2.setOnAction(e -> {
 				 window.setScene(main);
 			 });
 			 
+			 //Makes a ListView to display stocks being followed.
+			 followingList = new ListView<>();
+			 followingList.getItems();
+		   	 followingList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 			 
+		   	 //A button which adds the typed in stock to the followingList and the ArrayList. 
 			 Button followButton = new Button("follow");
 			 layout4.setConstraints(followButton, 0 , 100);	
 			 	followButton.setOnAction(e -> {
@@ -397,12 +419,9 @@ public void start(Stage primaryStage) throws Exception {
 			 			System.out.println("no");
 			 });
 			 
-			 followingList = new ListView<>();
-			 followingList.getItems();
-		   	 followingList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		   
-		   	 layout4.setConstraints(backButton,0,1);
-		   	 
+			layout4.setConstraints(backButton,0,1);
+		   	
+			//The button allows for the removal of the selected Stocks from both the ListView and the ArrayList. 
 		   	Button removeFollow = new Button ("Remove");
 			layout4.setConstraints(removeFollow,0,90);
 			removeFollow.setOnAction(e -> {
@@ -414,14 +433,17 @@ public void start(Stage primaryStage) throws Exception {
 			//	deleteTxt(selectedIndex, "src//Data//persFile.txt");
 			});
 
+			//A TextField where the user can enter the stock symbol they wish to add to the following list.
 		   	typeFollowed = new TextField("[Enter stocks symbols here you want to follow]");
 		   	layout4.setConstraints(typeFollowed, 100, 0);
 		   	 
+		   	//Adds all the GUI components to the layout.
 			layout4.getChildren().addAll(backButton2, followingList, typeFollowed, followButton, removeFollow);
 			layout4.setStyle("-fx-background-color: black");
-			//layout4.setBackground(new Background(BI2));
+			//Creates follow scene and sets its layout and its size.
 			follow = new Scene(layout4,450,450);
 			
+			//displays window
 			window.show();
 	
 	}
@@ -501,12 +523,18 @@ public void start(Stage primaryStage) throws Exception {
 		}
 		
 	}
+	
+	//Calls the close program class method and sends mails on close. 
 	private void closeProgram() {
-		Boolean anwser = closeProgram.display("", "Sure you want to exit?");
-		if (anwser)
+		Boolean anwser = closeProgram.display("", "Are you sure you want to exit?");
+		if (anwser) {
 			window.close();
-		createFile();
-		
+			sendEmails sendEmail = new sendEmails();
+			sendEmail.emailCode(emails, date, symbol2, close, open, high, low, vol);
+			}
+		createFiles c = new createFiles();
+		c.createTxtFile(followingStocks);
+		System.out.println(followingStocks.get(0));
 	}
 	 
 	 public void drawGraph (int change, String symb) {
@@ -538,6 +566,7 @@ public void start(Stage primaryStage) throws Exception {
 		 }
 	 }
 	 
+	 //Method required to load the image in order to generate the background image for the scenes. 
 	 private BufferedImage loadBufferedImage(String string)
 		{
 		    try

@@ -1,5 +1,5 @@
-package stockAnalysisProgram;
-
+//Class Name: sendingQuotes
+//Description: The main point of this class is to gather the necessary methods, sort them and then write to the files for the graph to read from. 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,70 +20,82 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 public class sendingQuotes {
-	
-	public static String symb;
-	
-	//private String filepathABX1 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Daily - 6 months.txt";
-	//private String filepathABX2 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Weekly - 2 years.txt";
-	//private String filepathABX3 = "C:\\Users\\momo_\\Documents\\Com Sci\\Data\\Monthly - 5 years.txt";
-	private String filePath = "C:\\Users\\momo_\\Documents\\Com Sci\\Data";
-	
-	public void sendQuotes (String symbol) throws IOException {
-	yahooFinance readToSend = new yahooFinance();
-	symb = symbol;
-    ArrayList<String> array = new ArrayList<String>(readToSend.readToHistory(symb, 1 , "Daily"));	
-	ArrayList<String> array2 = new ArrayList<String>(readToSend.readToHistory(symb, 2, "Weekly"));
-	ArrayList<String> array3 = new ArrayList<String>(readToSend.readToHistory(symb, 20, "Monthly"));
-	  
-	  saveToFileDaily(filePath, array, symb);
-	  saveToFileWeekly(filePath, array2, symb);
-	  saveToFileMonthly(filePath, array3, symb);
-	  
-	  System.out.println("The files were successfully updated");
-	  
-	}
-	
-	
-	public static String returnSymbol () {
-		return symb;
-	}
-	
-	public static void saveToFileDaily(String fileName, ArrayList list, String symb) throws FileNotFoundException {
-		Formatter format;
-		Path filePath = Paths.get(fileName+"\\"+symb+" Daily.txt");
-		try {
-			Files.write(filePath, list, Charset.defaultCharset());
-		}catch(IOException e) {
-			e.printStackTrace();
+
+		//Creates a global variable to store the symbol.
+		public static String symb;
+		
+		//Specifies the filePath.
+		private String filePath = "C:\\Users\\momo_\\Documents\\Com Sci\\Data";
+		
+		//This methods calls the other methods in this class.
+		public void sendQuotes (String symbol) throws IOException {
+		yahooFinance readToSend = new yahooFinance();
+		symb = symbol;
+		//Creates ArrayLists by taking the quotes from the yahooFinance class (symbol, time interval, frequency)
+	    ArrayList<String> array = new ArrayList<String>(readToSend.readToHistory(symb, 1 , "Daily"));	
+		ArrayList<String> array2 = new ArrayList<String>(readToSend.readToHistory(symb, 2, "Weekly"));
+		ArrayList<String> array3 = new ArrayList<String>(readToSend.readToHistory(symb, 20, "Monthly"));
+		  
+		  //Class the three methods
+		  saveToFileDaily(filePath, array, symb);
+		  saveToFileWeekly(filePath, array2, symb);
+		  saveToFileMonthly(filePath, array3, symb);
+		  
+		  System.out.println("The files were successfully updated");
+		  
 		}
 		
-	}
-	
-	
-	public static void saveToFileWeekly(String fileName, ArrayList list, String symb) throws FileNotFoundException {
-		Formatter format;
-		Path filePath = Paths.get(fileName+"\\"+symb+" Weekly.txt");
-		try {
-			Files.write(filePath, list, Charset.defaultCharset());
-		}catch(IOException e) {
-			e.printStackTrace();
+		//Mainly used to pass through the symbol to the subPlot class.
+		public static String returnSymbol () {
+			return symb;
 		}
 		
-	}
-	
-	public static void saveToFileMonthly(String fileName, ArrayList list, String symb) throws FileNotFoundException {
-		Formatter format;
-		Path filePath = Paths.get(fileName+"\\"+symb+" Monthly.txt");
-		try {
-			Files.write(filePath, list, Charset.defaultCharset());
-		}catch(IOException e) {
-			e.printStackTrace();
+		//Method saveToFileDaily
+		public static void saveToFileDaily(String fileName, ArrayList list, String symb) throws FileNotFoundException {
+			//Formatter
+			Formatter format;
+			//specifies the file path. 
+			Path filePath = Paths.get(fileName+"\\"+symb+" Daily.txt");
+			//updates the with file specified with the list.
+			try {
+				Files.write(filePath, list, Charset.defaultCharset());
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
 		
+		//Method saveToFileWeekly (functions similarly to the method above)
+		public static void saveToFileWeekly(String fileName, ArrayList list, String symb) throws FileNotFoundException {
+			Formatter format;
+			Path filePath = Paths.get(fileName+"\\"+symb+" Weekly.txt");
+			try {
+				Files.write(filePath, list, Charset.defaultCharset());
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		//Method saveToFileMonthly (functions similarly to the method above)
+		public static void saveToFileMonthly(String fileName, ArrayList list, String symb) throws FileNotFoundException {
+			Formatter format;
+			Path filePath = Paths.get(fileName+"\\"+symb+" Monthly.txt");
+			try {
+				Files.write(filePath, list, Charset.defaultCharset());
+			}catch(IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+
 	}
+		
+
 	
 
-}
+
 	
 	
 
